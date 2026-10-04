@@ -14,10 +14,15 @@ class RolesScreen extends StatefulWidget {
 class _RolesScreenState extends State<RolesScreen> {
   late Future<List<Role>> _future;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _reload();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _reload();
+    }
   }
 
   void _reload() {

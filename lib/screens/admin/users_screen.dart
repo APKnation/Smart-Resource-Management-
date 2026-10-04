@@ -17,10 +17,15 @@ class _UsersScreenState extends State<UsersScreen> {
   late Future<List<Profile>> _future;
   String _query = '';
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _reload();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _reload();
+    }
   }
 
   @override

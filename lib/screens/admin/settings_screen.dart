@@ -18,10 +18,15 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
   bool _requireApproval = true;
   bool _busy = false;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _future = _load();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _future = _load();
+    }
   }
 
   @override

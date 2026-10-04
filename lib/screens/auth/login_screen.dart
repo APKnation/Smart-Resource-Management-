@@ -39,7 +39,18 @@ class _LoginScreenState extends State<LoginScreen> {
       await widget.state.signIn(_email.text.trim(), _password.text);
       if (mounted) context.go(Routes.dashboard);
     } on AuthException catch (e) {
-      setState(() => _error = e.message);
+      final msg = e.message.toLowerCase();
+      if (msg.contains('invalid login credentials')) {
+        setState(() => _error =
+            'Wrong email or password. If you just registered, your account '
+            'may still need confirmation.');
+      } else if (msg.contains('not confirmed')) {
+        setState(() => _error =
+            'Please confirm your email first (check your inbox), or ask an '
+            'admin to confirm your account.');
+      } else {
+        setState(() => _error = e.message);
+      }
     } catch (_) {
       setState(() => _error = 'Sign-in failed. Check your connection.');
     } finally {

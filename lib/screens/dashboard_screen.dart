@@ -15,11 +15,20 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late Future<_DashData> _future;
+  bool _loadedOnce = false;
 
   @override
   void initState() {
     super.initState();
-    _future = _load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _future = _load();
+    }
   }
 
   Future<_DashData> _load() async {

@@ -33,10 +33,15 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
 
   bool get _isEdit => widget.resourceId != null;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _init();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _init();
+    }
   }
 
   Future<void> _init() async {

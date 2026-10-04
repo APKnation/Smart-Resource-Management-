@@ -55,7 +55,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ));
       context.go(Routes.login);
     } on AuthException catch (e) {
-      setState(() => _error = e.message);
+      final msg = e.message.toLowerCase();
+      if (msg.contains('rate limit') || msg.contains('over_email_send')) {
+        setState(() => _error =
+            'Signup emails are rate-limited on the free tier. Ask an admin '
+            'to create your account (Dashboard → Authentication → Users) '
+            'or disable “Confirm email” in Supabase Auth settings.');
+      } else if (msg.contains('already registered')) {
+        setState(() => _error =
+            'That email is already registered — try signing in instead.');
+      } else {
+        setState(() => _error = e.message);
+      }
     } catch (_) {
       setState(() => _error = 'Registration failed. Please try again.');
     } finally {

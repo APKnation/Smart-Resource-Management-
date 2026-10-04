@@ -21,10 +21,15 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
   late Future<Resource> _future;
   late Future<List<ResourceVersion>> _versionsFuture;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _reload();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _reload();
+    }
   }
 
   void _reload() {

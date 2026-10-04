@@ -19,10 +19,15 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   String _search = '';
   late Future<List<Resource>> _future;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _future = _load();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _future = _load();
+    }
   }
 
   Future<List<Resource>> _load() async {

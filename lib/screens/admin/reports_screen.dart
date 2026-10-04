@@ -17,10 +17,15 @@ class ReportsScreen extends StatefulWidget {
 class _ReportsScreenState extends State<ReportsScreen> {
   late Future<_ReportData> _future;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _future = _load();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _future = _load();
+    }
   }
 
   Future<_ReportData> _load() async {

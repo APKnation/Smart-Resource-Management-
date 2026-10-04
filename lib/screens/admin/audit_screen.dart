@@ -15,10 +15,15 @@ class AuditScreen extends StatefulWidget {
 class _AuditScreenState extends State<AuditScreen> {
   late Future<List<AuditLog>> _future;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    _reload();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      _reload();
+    }
   }
 
   void _reload() {

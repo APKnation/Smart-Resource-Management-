@@ -20,13 +20,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _newPassword = TextEditingController();
   bool _busy = false;
 
+  bool _loadedOnce = false;
+
   @override
-  void initState() {
-    super.initState();
-    final me = AppStateScope.of(context).me;
-    _fullName.text = me?.fullName ?? '';
-    _department.text = me?.department ?? '';
-    _institution.text = me?.institution ?? '';
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedOnce) {
+      _loadedOnce = true;
+      final me = AppStateScope.of(context).me;
+      _fullName.text = me?.fullName ?? '';
+      _department.text = me?.department ?? '';
+      _institution.text = me?.institution ?? '';
+    }
   }
 
   @override
