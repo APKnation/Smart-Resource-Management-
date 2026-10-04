@@ -215,9 +215,9 @@ class _RolesScreenState extends State<RolesScreen> {
                 ],
               ),
             ),
-          ),
-        );
+          );
       },
+      ),
     );
   }
 }

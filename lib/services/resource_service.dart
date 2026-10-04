@@ -94,10 +94,10 @@ class ResourceService {
       path = 'uploads/$uid/${DateTime.now().millisecondsSinceEpoch}.$ext';
       await _db.storage.from(_bucket).uploadBinary(
             path,
-            file.bytes!,
+            await file.readAsBytes(),
             fileOptions: const FileOptions(upsert: false),
           );
-      size = file.size;
+      size = await file.length() ?? 0;
       name = file.name;
       mime = _mimeFromExt(ext);
     }
@@ -150,10 +150,10 @@ class ResourceService {
       if (file != null) {
         final ext = file.extension ?? 'bin';
         final path = 'uploads/$uid/${DateTime.now().millisecondsSinceEpoch}.$ext';
-        await _db.storage.from(_bucket).uploadBinary(path, file.bytes!);
+        await _db.storage.from(_bucket).uploadBinary(path, await file.readAsBytes());
         patch['storage_path'] = path;
         patch['file_name'] = file.name;
-        patch['file_size'] = file.size;
+        patch['file_size'] = await file.length() ?? 0;
         patch['mime_type'] = _mimeFromExt(ext);
       } else {
         patch['storage_path'] = null;
@@ -198,13 +198,13 @@ class ResourceService {
     final nextVer = res.version + 1;
     final ext = file.extension ?? 'bin';
     final path = 'versions/$id/$nextVer.$ext';
-    await _db.storage.from(_bucket).uploadBinary(path, file.bytes!);
+    await _db.storage.from(_bucket).uploadBinary(path, await file.readAsBytes());
     await _db.from('resource_versions').insert({
       'resource_id': id,
       'version': nextVer,
       'storage_path': path,
       'file_name': file.name,
-      'file_size': file.size,
+      'file_size': await file.length() ?? 0,
       'mime_type': _mimeFromExt(ext),
       'notes': notes,
       'uploaded_by': uid,

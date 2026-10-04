@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../app_state.dart';
 import '../core/constants.dart';
 import '../models/models.dart';
+import '../services/resource_service.dart';
 import '../widgets/widgets.dart';
 
 class FavoritesScreen extends StatefulWidget {

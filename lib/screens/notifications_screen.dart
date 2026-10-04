@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,7 +28,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void _reload() {
     final app = AppStateScope.of(context);
     _future = app.notifications.list();
-    app.refreshUnread();
+    unawaited(app.refreshUnread());
   }
 
   @override

@@ -6,6 +6,7 @@ import '../app_state.dart';
 import '../core/constants.dart';
 import '../core/utils.dart';
 import '../models/models.dart';
+import '../services/resource_service.dart';
 import '../widgets/widgets.dart';
 
 class ResourceFormScreen extends StatefulWidget {
@@ -65,14 +66,13 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
   }
 
   Future<void> _pickFile() async {
-    final res = await FilePicker.platform.pickFiles(
+    final f = await FilePicker.pickFile(
       type: FileType.custom,
       allowedExtensions: FileRules.allowedExtensions,
-      withData: true,
     );
-    if (res == null || res.files.isEmpty) return;
-    final f = res.files.single;
-    if (f.size > FileRules.maxFileSizeMb * 1024 * 1024) {
+    if (f == null) return;
+    final len = await f.length() ?? 0;
+    if (len > FileRules.maxFileSizeMb * 1024 * 1024) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
@@ -98,6 +98,7 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
     try {
       final autoApprove = app.canApprove;
       if (_isEdit) {
+        // Update path
         await app.resources.update(
           widget.resourceId!,
           title: _title.text.trim(),
@@ -112,7 +113,7 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
         messenger.showSnackBar(const SnackBar(
             content: Text('Resource updated.')));
       } else {
-        final id = await app.resources.create(
+        await app.resources.create(
           title: _title.text.trim(),
           description: _description.text.trim(),
           author: _author.text.trim(),
@@ -231,8 +232,13 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
                                     ],
                                   ),
                                   if (_file != null)
-                                    Text(
-                                      '${formatBytes(_file!.size)} · ${_file!.extension ?? ''}',
+                                    FutureBuilder<int>(
+                                      future: _file!.length(),
+                                      builder: (context, snap) => Text(
+                                        '${formatBytes(snap.data)} · ${_file!.extension ?? ''}',
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                    ),
                                       style:
                                           Theme.of(context).textTheme.bodySmall,
                                     ),

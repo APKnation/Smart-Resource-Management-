@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../app_state.dart';
 import '../core/constants.dart';
 import '../core/utils.dart';
+import '../models/models.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
