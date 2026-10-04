@@ -6,7 +6,9 @@ import '../../app_state.dart';
 import '../../core/constants.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({super.key, required this.state});
+
+  final AppState state;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -39,8 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _error = null;
     });
     try {
-      final state = AppStateScope.require(context);
-      await state.register(
+      await widget.state.register(
         email: _email.text.trim(),
         password: _password.text,
         fullName: _fullName.text.trim(),
@@ -55,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       context.go(Routes.login);
     } on AuthException catch (e) {
       setState(() => _error = e.message);
-    } catch (e) {
+    } catch (_) {
       setState(() => _error = 'Registration failed. Please try again.');
     } finally {
       if (mounted) setState(() => _busy = false);

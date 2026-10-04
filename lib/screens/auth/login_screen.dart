@@ -6,7 +6,9 @@ import '../../app_state.dart';
 import '../../core/constants.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.state});
+
+  final AppState state;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -34,12 +36,11 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
     try {
-      final state = AppStateScope.require(context);
-      await state.signIn(_email.text.trim(), _password.text);
+      await widget.state.signIn(_email.text.trim(), _password.text);
       if (mounted) context.go(Routes.dashboard);
     } on AuthException catch (e) {
       setState(() => _error = e.message);
-    } catch (e) {
+    } catch (_) {
       setState(() => _error = 'Sign-in failed. Check your connection.');
     } finally {
       if (mounted) setState(() => _busy = false);

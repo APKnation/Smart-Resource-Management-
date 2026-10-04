@@ -37,11 +37,11 @@ GoRouter buildRouter(AppState state) {
     routes: [
       GoRoute(
         path: Routes.login,
-        builder: (context, goState) => const LoginScreen(),
+        builder: (context, goState) => LoginScreen(state: state),
       ),
       GoRoute(
         path: Routes.register,
-        builder: (context, goState) => const RegisterScreen(),
+        builder: (context, goState) => RegisterScreen(state: state),
       ),
       ShellRoute(
         builder: (context, goState, child) =>
