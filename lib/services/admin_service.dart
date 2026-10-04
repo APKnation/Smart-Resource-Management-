@@ -215,7 +215,9 @@ class NotificationService {
   final SupabaseClient _db = Supabase.instance.client;
 
   RealtimeChannel subscribe(void Function(AppNotification) onInsert) {
-    final uid = _db.auth.currentUser!.id;
+    final user = _db.auth.currentUser;
+    if (user == null) return null as RealtimeChannel;
+    final uid = user.id;
     return _db
         .channel('public:notifications')
         .onPostgresChanges(
