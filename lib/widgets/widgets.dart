@@ -168,7 +168,12 @@ class StatCard extends StatelessWidget {
 }
 
 class ResourceCard extends StatelessWidget {
-  const ResourceCard({super.key, required this.resource, this.isFavorite = false, this.onToggleFavorite});
+  const ResourceCard({
+    super.key,
+    required this.resource,
+    this.isFavorite = false,
+    this.onToggleFavorite,
+  });
 
   final Resource resource;
   final bool isFavorite;
@@ -271,7 +276,7 @@ class SectionHeader extends StatelessWidget {
           Expanded(
             child: Text(title, style: Theme.of(context).textTheme.titleLarge),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

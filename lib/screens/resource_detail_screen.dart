@@ -123,7 +123,8 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                       destructive: true);
                   if (!ok || !mounted) return;
                   await app.resources.delete(r.id);
-                  if (mounted) context.go(Routes.resources);
+                  if (!mounted) return;
+                  if (context.mounted) context.go(Routes.resources);
                 },
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
               ),

@@ -18,7 +18,7 @@ Future<void> main() async {
   if (Env.isConfigured) {
     await Supabase.initialize(
       url: Env.supabaseUrl,
-      anonKey: Env.supabaseAnonKey,
+      publishableKey: Env.supabaseAnonKey,
     );
   }
   final state = AppState();

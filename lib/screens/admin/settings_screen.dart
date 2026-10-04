@@ -101,6 +101,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       ),
     );
     if (ok != true || title.text.trim().isEmpty) return;
+    if (!mounted) return;
     final app = AppStateScope.of(context);
     try {
       await app.admin.broadcast(title.text.trim(), body.text.trim());

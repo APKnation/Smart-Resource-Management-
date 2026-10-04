@@ -30,7 +30,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final desc = TextEditingController(text: existing?.description ?? '');
     String type = existing?.type ?? 'subject';
     String? parentId = existing?.parentId;
-    final cats = await app_categories();
+    final cats = await _allCategories();
     if (!mounted) return;
     final ok = await showDialog<bool>(
       context: context,
@@ -93,6 +93,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       ),
     );
     if (ok != true || name.text.trim().isEmpty) return;
+    if (!mounted) return;
     final app = AppStateScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
     try {
@@ -111,7 +112,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     }
   }
 
-  Future<List<Category>> app_categories() {
+  Future<List<Category>> _allCategories() {
     final app = AppStateScope.of(context);
     return app.resources.categories();
   }
@@ -123,6 +124,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         confirmLabel: 'Delete',
         destructive: true);
     if (!ok) return;
+    if (!mounted) return;
     final app = AppStateScope.of(context);
     try {
       await app.admin.deleteCategory(c.id);

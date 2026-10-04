@@ -188,10 +188,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                       );
-                      if (ok == true && mounted) {
-                        await app.signOut();
-                        if (mounted) context.go(Routes.login);
-                      }
+                      if (ok != true || !mounted) return;
+                      await app.signOut();
+                      if (!mounted) return;
+                      if (context.mounted) context.go(Routes.login);
                     },
                     icon: const Icon(Icons.logout),
                     label: const Text('Sign out'),

@@ -6,8 +6,6 @@ import '../app_state.dart';
 import '../core/constants.dart';
 import '../core/utils.dart';
 import '../models/models.dart';
-import '../services/resource_service.dart';
-import '../widgets/widgets.dart';
 
 class ResourceFormScreen extends StatefulWidget {
   const ResourceFormScreen({super.key, this.resourceId});

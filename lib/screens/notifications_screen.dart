@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../app_state.dart';
-import '../core/constants.dart';
 import '../core/utils.dart';
 import '../models/models.dart';
 import '../widgets/widgets.dart';
@@ -114,12 +113,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 onTap: () async {
                                   if (!n.read) {
                                     await app.notifications.markRead(n.id);
-                                    app.refreshUnread();
+                                    unawaited(app.refreshUnread());
                                   }
                                   final link = n.link;
                                   if (link != null && link.startsWith('/')) {
-                                    context.go(link);
-                                  } else if (mounted) {
+                                    if (context.mounted) context.go(link);
+                                  } else {
                                     setState(_reload);
                                   }
                                 },

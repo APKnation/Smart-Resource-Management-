@@ -50,7 +50,7 @@ class AdminService {
     required List<String> permissions,
   }) async {
     final payload = {
-      if (id != null) 'id': id,
+      ?id: id,
       'name': name,
       'description': description,
       'permissions': permissions,
@@ -75,7 +75,7 @@ class AdminService {
     String? parentId,
   }) async {
     final payload = {
-      if (id != null) 'id': id,
+      ?id: id,
       'name': name,
       'description': description,
       'type': type,

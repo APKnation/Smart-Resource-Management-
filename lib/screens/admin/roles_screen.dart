@@ -72,6 +72,7 @@ class _RolesScreenState extends State<RolesScreen> {
       ),
     );
     if (ok != true) return;
+    if (!mounted) return;
     final app = AppStateScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
     try {
@@ -94,21 +95,20 @@ class _RolesScreenState extends State<RolesScreen> {
   }
 
   Future<void> _deleteRole(Role role) async {
+    final messenger = ScaffoldMessenger.of(context);
     final ok = await confirmDialog(context,
         title: 'Delete role "${role.name}"?',
         message: 'Users keep their core enum role; this removes the custom role record.',
         confirmLabel: 'Delete',
         destructive: true);
     if (!ok) return;
+    if (!mounted) return;
     final app = AppStateScope.of(context);
     try {
       await app.admin.deleteRole(role.id);
       setState(_reload);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed: $e')));
-      }
+      messenger.showSnackBar(SnackBar(content: Text('Failed: $e')));
     }
   }
 
