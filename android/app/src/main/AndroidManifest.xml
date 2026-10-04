@@ -2,7 +2,7 @@
     <!-- Required for Supabase network access -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="e_resource"
+        android:label="E-Resource Portal"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
