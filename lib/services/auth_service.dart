@@ -6,7 +6,7 @@ import '../models/models.dart';
 class AuthException implements Exception {
   final String message;
 
-  const AuthException(this.message);
+  AuthException(this.message);
 
   @override
   String toString() => message;
