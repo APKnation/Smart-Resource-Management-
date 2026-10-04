@@ -1,6 +1,6 @@
 # E-Resource Portal
 
-A full-featured **Electronic Resources Management System** built with **Flutter** (web + mobile) and **Supabase** (Postgres, Auth, Storage, Realtime).
+A full-featured **Electronic Resources Management System** built with **Flutter** (**Web + Android**) and **Supabase** (Postgres, Auth, Storage, Realtime).
 
 ## Features
 
@@ -43,6 +43,8 @@ lib/
                  notifications, profile
 supabase/
   schema.sql     the entire database schema — run this once
+android/        Android platform (INTERNET permission pre-configured)
+web/            Web platform (PWA manifest pre-configured)
 ```
 
 ## Setup
@@ -86,11 +88,15 @@ Both values are in Supabase Dashboard → **Settings → API**.
 ```bash
 flutter pub get
 
-# Web
+# Web (Chrome)
 flutter run -d chrome
 
-# Android / iOS / macOS / Windows
-flutter run
+# Android device / emulator
+flutter run -d android
+
+# Release builds
+flutter build web
+flutter build apk --release
 ```
 
 ## How access control works
