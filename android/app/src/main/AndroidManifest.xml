@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for Supabase network access -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="e_resource"
         android:name="${applicationName}"
