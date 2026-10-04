@@ -131,7 +131,8 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password) async {
-    await auth.signIn(email, password);
+    final profile = await auth.signIn(email, password);
+    if (profile == null) return;
     await refreshProfile();
     await refreshFavorites();
     await refreshSettings();
@@ -147,13 +148,17 @@ class AppState extends ChangeNotifier {
     String? department,
     String? institution,
   }) async {
-    await auth.register(
+    final profile = await auth.register(
       email: email,
       password: password,
       fullName: fullName,
       department: department,
       institution: institution,
     );
+    if (profile != null) {
+      // Profile was created successfully; the app is already on the login
+      // screen (register screen handles navigation), so nothing else to do.
+    }
   }
 
   Future<void> signOut() async {

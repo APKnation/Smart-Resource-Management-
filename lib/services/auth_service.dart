@@ -3,6 +3,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/models.dart';
 
 /// Authentication + current-account operations.
+class AuthException implements Exception {
+  final String message;
+
+  const AuthException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+/// Authentication + current-account operations.
 class AuthService {
   final SupabaseClient _db = Supabase.instance.client;
 
@@ -32,18 +42,18 @@ class AuthService {
     return Profile.fromMap(inserted);
   }
 
-  Future<Profile> signIn(String email, String password) async {
+  Future<Profile?> signIn(String email, String password) async {
     await _db.auth.signInWithPassword(email: email, password: password);
     final profile = await ensureProfile();
     if (profile != null && !profile.isActive) {
       await signOut();
-      throw const AuthException(
+      throw AuthException(
           'This account has been deactivated. Contact an administrator.');
     }
-    return profile!;
+    return profile;
   }
 
-  Future<Profile> register({
+  Future<Profile?> register({
     required String email,
     required String password,
     required String fullName,
@@ -60,10 +70,10 @@ class AuthService {
       },
     );
     if (res.user == null) {
-      throw const AuthException('Registration failed.');
+      return null;
     }
     // Profile is normally created by the DB trigger; fall back to manual insert.
-    return (await ensureProfile())!;
+    return ensureProfile();
   }
 
   Future<void> signOut() => _db.auth.signOut();
