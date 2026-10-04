@@ -69,6 +69,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
   }
 
   Future<void> _broadcast() async {
+    final messenger = ScaffoldMessenger.of(context);
     final title = TextEditingController();
     final body = TextEditingController();
     final ok = await showDialog<bool>(
@@ -103,15 +104,10 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     final app = AppStateScope.of(context);
     try {
       await app.admin.broadcast(title.text.trim(), body.text.trim());
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Broadcast sent to all active users.')));
-      }
+      messenger.showSnackBar(const SnackBar(
+          content: Text('Broadcast sent to all active users.')));
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed: $e')));
-      }
+      messenger.showSnackBar(SnackBar(content: Text('Failed: $e')));
     }
   }
 

@@ -128,8 +128,8 @@ class AdminService {
     Future<int> count(String table, {String? eqCol, String? eqVal}) async {
       var q = _db.from(table).select('id');
       if (eqCol != null) q = q.eq(eqCol, eqVal!);
-      final rows = await q.count();
-      return rows;
+      final res = await q.count();
+      return res.count;
     }
 
     final results = <String, int>{};
@@ -222,7 +222,11 @@ class NotificationService {
           event: PostgresChangeEvent.insert,
           schema: 'public',
           table: 'notifications',
-          filter: 'user_id=eq.$uid',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: uid,
+          ),
           callback: (payload) {
             final row = (payload.newRecord as Map).cast<String, dynamic>();
             onInsert(AppNotification.fromMap(row));
@@ -246,7 +250,7 @@ class NotificationService {
         .select('id')
         .eq('read', false)
         .count();
-    return res;
+    return res.count;
   }
 
   Future<void> markRead(String id) =>

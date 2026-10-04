@@ -40,7 +40,6 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   @override
   Widget build(BuildContext context) {
     final app = AppStateScope.of(context);
-    final wide = MediaQuery.sizeOf(context).width >= 900;
     return Scaffold(
       body: Column(
         children: [

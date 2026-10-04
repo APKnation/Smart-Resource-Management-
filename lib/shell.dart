@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'app_state.dart';
 import 'core/constants.dart';
 import 'core/utils.dart';
+import 'models/models.dart';
 
 /// Responsive scaffold: rail on wide screens, drawer + bottom bar on narrow.
 class AppShell extends StatelessWidget {
@@ -149,19 +150,6 @@ class AppShell extends StatelessWidget {
     if (loc.startsWith('${Routes.resources}/')) return 'Resource';
     if (loc == Routes.upload) return 'Upload Resource';
     return 'E-Resource Portal';
-  }
-}
-
-/// InheritedWidget so screens can read AppState without constructor params.
-class AppStateScope extends InheritedNotifier<AppState> {
-  const AppStateScope({super.key, required AppState state, required super.child})
-      : super(notifier: state);
-
-  static AppState of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<AppStateScope>();
-    assert(scope != null, 'AppStateScope not found');
-    return scope!.notifier!;
   }
 }
 

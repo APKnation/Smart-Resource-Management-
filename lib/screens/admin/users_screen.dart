@@ -41,7 +41,7 @@ class _UsersScreenState extends State<UsersScreen> {
     try {
       await app.admin.setUserRole(p.id, role);
       messenger.showSnackBar(SnackBar(
-          content: Text('${p.fullName} is now ${role.label}.'));
+          content: Text('${p.fullName} is now ${role.label}.')));
       setState(_reload);
     } catch (e) {
       messenger.showSnackBar(SnackBar(content: Text('Failed: $e')));
@@ -56,7 +56,6 @@ class _UsersScreenState extends State<UsersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final app = AppStateScope.of(context);
     return Scaffold(
       body: Column(
         children: [

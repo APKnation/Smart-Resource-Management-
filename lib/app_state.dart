@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'models/models.dart';
 import 'services/admin_service.dart';
 import 'services/auth_service.dart';
 import 'services/resource_service.dart';
+
+export 'services/resource_service.dart' show ResourceQuery;
 
 /// Central app state: session, profile, role checks, favorites, notifications.
 class AppState extends ChangeNotifier {
@@ -158,5 +161,17 @@ class AppState extends ChangeNotifier {
     _channel?.unsubscribe();
     _channel = null;
     notifyListeners();
+  }
+}
+
+/// InheritedWidget so screens can read AppState without constructor params.
+class AppStateScope extends InheritedNotifier<AppState> {
+  const AppStateScope({super.key, required AppState state, required super.child})
+      : super(notifier: state);
+
+  static AppState of(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<AppStateScope>();
+    assert(scope != null, 'AppStateScope not found in widget tree');
+    return scope!.notifier!;
   }
 }
