@@ -44,24 +44,28 @@ class AppState extends ChangeNotifier {
 
   Future<void> init() async {
     _authSub = auth.onAuthStateChange.listen((event) async {
-      switch (event.event) {
-        case AuthChangeEvent.signedIn:
-        case AuthChangeEvent.initialSession:
-          await refreshProfile();
-          await refreshFavorites();
-          await refreshSettings();
-          await refreshUnread();
-          _subscribeRealtime();
-          break;
-        case AuthChangeEvent.signedOut:
-          profile = null;
-          _favoriteIds = {};
-          _unread = 0;
-          _channel?.unsubscribe();
-          _channel = null;
-          break;
-        default:
-          break;
+      try {
+        switch (event.event) {
+          case AuthChangeEvent.signedIn:
+          case AuthChangeEvent.initialSession:
+            await refreshProfile();
+            await refreshFavorites();
+            await refreshSettings();
+            await refreshUnread();
+            _subscribeRealtime();
+            break;
+          case AuthChangeEvent.signedOut:
+            profile = null;
+            _favoriteIds = {};
+            _unread = 0;
+            _channel?.unsubscribe();
+            _channel = null;
+            break;
+          default:
+            break;
+        }
+      } catch (e) {
+        debugPrint('Auth state handling failed: $e');
       }
       notifyListeners();
     });
