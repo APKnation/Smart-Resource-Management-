@@ -232,15 +232,13 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
                                     ],
                                   ),
                                   if (_file != null)
-                                    FutureBuilder<int>(
+                                    FutureBuilder<int?>(
                                       future: _file!.length(),
                                       builder: (context, snap) => Text(
                                         '${formatBytes(snap.data)} · ${_file!.extension ?? ''}',
-                                        style: Theme.of(context).textTheme.bodySmall,
+                                        style:
+                                            Theme.of(context).textTheme.bodySmall,
                                       ),
-                                    ),
-                                      style:
-                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                   if (isNew && _file == null)
                                     const Padding(

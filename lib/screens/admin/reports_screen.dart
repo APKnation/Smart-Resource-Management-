@@ -39,6 +39,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
+  void _reload() {
+    setState(() => _future = _load());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,19 +65,21 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       ),
                       IconButton(
                         tooltip: 'Refresh',
-                        onPressed: () => setState(() => _future = _load()),
+                        onPressed: _reload,
                         icon: const Icon(Icons.refresh),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   if (snap.hasError)
-                    ErrorView(error: snap.error!, onRetry: () => setState(() => _future = _load()))
+                    ErrorView(error: snap.error!, onRetry: _reload)
                   else if (!snap.hasData)
-                    const Center(child: Padding(
-                      padding: EdgeInsets.all(32),
-                      child: CircularProgressIndicator(),
-                    ))
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
                   else ...[
                     _buildStats(context, snap.data!.counts),
                     const SizedBox(height: 16),
@@ -86,9 +92,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ],
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -97,10 +103,25 @@ class _ReportsScreenState extends State<ReportsScreen> {
       spacing: 12,
       runSpacing: 12,
       children: [
-        StatCard(label: 'Total resources', value: '${c['resources'] ?? 0}', icon: Icons.library_books_outlined),
-        StatCard(label: 'Downloads', value: '${c['downloads'] ?? 0}', icon: Icons.download_outlined, color: Colors.purple),
-        StatCard(label: 'Views', value: '${c['views'] ?? 0}', icon: Icons.visibility_outlined, color: Colors.blue),
-        StatCard(label: 'Active users', value: '${c['activeUsers'] ?? 0}', icon: Icons.groups_outlined, color: Colors.teal),
+        StatCard(
+            label: 'Total resources',
+            value: '${c['resources'] ?? 0}',
+            icon: Icons.library_books_outlined),
+        StatCard(
+            label: 'Downloads',
+            value: '${c['downloads'] ?? 0}',
+            icon: Icons.download_outlined,
+            color: Colors.purple),
+        StatCard(
+            label: 'Views',
+            value: '${c['views'] ?? 0}',
+            icon: Icons.visibility_outlined,
+            color: Colors.blue),
+        StatCard(
+            label: 'Active users',
+            value: '${c['activeUsers'] ?? 0}',
+            icon: Icons.groups_outlined,
+            color: Colors.teal),
       ],
     );
   }
@@ -129,15 +150,19 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   maxY: maxV + 1,
                   gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),
-                  titlesData: const FlTitlesData(
-                    leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 28)),
-                    rightTitles: AxisTitles(),
-                    topTitles: AxisTitles(),
+                  titlesData: FlTitlesData(
+                    leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(
+                          showTitles: true, reservedSize: 28),
+                    ),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 30,
-                        getTitlesWidget: _dayLabel,
+                        getTitlesWidget: (value, meta) =>
+                            _dayLabel(value, meta, days),
                       ),
                     ),
                   ),
@@ -164,13 +189,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  static Widget _dayLabel(double value, TitleMeta meta) {
+  Widget _dayLabel(double value, TitleMeta meta, List<DateTime> days) {
     final idx = value.toInt();
-    if (idx < 0 || idx > 13) return const SizedBox();
-    final d = DateTime.now().subtract(Duration(days: 13 - idx));
+    if (idx < 0 || idx >= days.length) return const SizedBox.shrink();
     return SideTitleWidget(
       meta: meta,
-      child: Text(DateFormat('MM/dd').format(d),
+      child: Text(DateFormat('MM/dd').format(days[idx]),
           style: const TextStyle(fontSize: 9)),
     );
   }
