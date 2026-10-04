@@ -111,11 +111,10 @@ class AppState extends ChangeNotifier {
 
   void _subscribeRealtime() {
     _channel?.unsubscribe();
-    final channel = notifications.subscribe((n) {
+    _channel = notifications.subscribe((n) {
       _unread += 1;
       notifyListeners();
     });
-    if (channel != null) _channel = channel;
   }
 
   bool isFavorite(String resourceId) => _favoriteIds.contains(resourceId);

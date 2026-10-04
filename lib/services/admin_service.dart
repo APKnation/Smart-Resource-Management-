@@ -214,9 +214,9 @@ class AdminService {
 class NotificationService {
   final SupabaseClient _db = Supabase.instance.client;
 
-  RealtimeChannel subscribe(void Function(AppNotification) onInsert) {
+  RealtimeChannel? subscribe(void Function(AppNotification) onInsert) {
     final user = _db.auth.currentUser;
-    if (user == null) return null as RealtimeChannel;
+    if (user == null) return null;
     final uid = user.id;
     return _db
         .channel('public:notifications')
