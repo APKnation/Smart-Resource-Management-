@@ -198,7 +198,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final idx = value.toInt();
     if (idx < 0 || idx >= days.length) return const SizedBox.shrink();
     return SideTitleWidget(
-      meta: meta,
+      axisSide: meta.axisSide,
       child: Text(DateFormat('MM/dd').format(days[idx]),
           style: const TextStyle(fontSize: 9)),
     );
