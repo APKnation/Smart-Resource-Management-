@@ -46,18 +46,23 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
 
   Future<void> _init() async {
     final app = AppStateScope.of(context);
-    _categories = await app.resources.categories();
-    if (_isEdit) {
-      _existing = await app.resources.get(widget.resourceId!);
-      _title.text = _existing!.title;
-      _description.text = _existing!.description ?? '';
-      _author.text = _existing!.author ?? '';
-      _url.text = _existing!.externalUrl ?? '';
-      _type = _existing!.resourceType;
-      _selectedCats.addAll(_existing!.categories.map((c) => c.id));
+    try {
+      _categories = await app.resources.categories();
+      if (_isEdit) {
+        _existing = await app.resources.get(widget.resourceId!);
+        _title.text = _existing!.title;
+        _description.text = _existing!.description ?? '';
+        _author.text = _existing!.author ?? '';
+        _url.text = _existing!.externalUrl ?? '';
+        _type = _existing!.resourceType;
+        _selectedCats.addAll(_existing!.categories.map((c) => c.id));
+      }
+    } catch (e) {
+      _initError = 'Failed to load data: $e';
+    } finally {
+      _loadedCats = true;
+      if (mounted) setState(() {});
     }
-    _loadedCats = true;
-    if (mounted) setState(() {});
   }
 
   @override
@@ -151,7 +156,30 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
       ),
       body: !_initDone
           ? const Center(child: CircularProgressIndicator())
-          : Center(
+          : _initError != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.error_outline,
+                            size: 48, color: Theme.of(context).colorScheme.error),
+                        const SizedBox(height: 16),
+                        Text(_initError!,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error)),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: _init,
+                          icon: const Icon(Icons.refresh), 
+                          label: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Form(
@@ -313,4 +341,5 @@ class _ResourceFormScreenState extends State<ResourceFormScreen> {
 
   bool get _initDone => _isEdit ? _existing != null : _loadedCats;
   bool _loadedCats = false;
+  String? _initError;
 }

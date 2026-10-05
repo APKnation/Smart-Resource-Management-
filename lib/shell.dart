@@ -75,10 +75,10 @@ class AppShell extends StatelessWidget {
         drawer: _Drawer(state: state, destinations: destinations),
         body: child,
         bottomNavigationBar: NavigationBar(
-          selectedIndex: selectedIndex.clamp(0, 4),
-          onDestinationSelected: (i) => context.go(_userDestinations[i].route),
+          selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
+          onDestinationSelected: (i) => context.go(destinations[i].route),
           destinations: [
-            for (final d in _userDestinations.take(5))
+            for (final d in destinations)
               NavigationDestination(
                 icon: d.route == Routes.notifications
                     ? Badge(

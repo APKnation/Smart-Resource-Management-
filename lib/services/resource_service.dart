@@ -51,7 +51,6 @@ class ResourceService {
     }
     if (q.onlyMine && uid != null) query = query.eq('uploaded_by', uid);
     if (q.onlyFavorites && uid != null) {
-      query = query.filter('favorites.user_id', 'eq', uid);
       query = query.eq('favorites.user_id', uid);
     }
 

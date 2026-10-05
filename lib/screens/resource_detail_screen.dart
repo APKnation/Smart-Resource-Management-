@@ -56,6 +56,17 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
     }
   }
 
+  Future<void> _openLink(String url) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('No app available to open this link.')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final app = AppStateScope.of(context);
@@ -94,7 +105,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
               ),
             if (r.externalUrl != null && r.externalUrl!.isNotEmpty)
               OutlinedButton.icon(
-                onPressed: () => _openFile(r, download: false),
+                onPressed: () => _openLink(r.externalUrl!),
                 icon: const Icon(Icons.link),
                 label: const Text('Open link'),
               ),

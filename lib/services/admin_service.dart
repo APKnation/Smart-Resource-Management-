@@ -49,12 +49,12 @@ class AdminService {
     String? description,
     required List<String> permissions,
   }) async {
-    final payload = {
-      ?id: id,
+    final payload = <String, dynamic>{
       'name': name,
       'description': description,
       'permissions': permissions,
     };
+    if (id != null) payload['id'] = id;
     if (id == null) {
       await _db.from('roles').insert(payload);
     } else {
@@ -74,13 +74,13 @@ class AdminService {
     required String type,
     String? parentId,
   }) async {
-    final payload = {
-      ?id: id,
+    final payload = <String, dynamic>{
       'name': name,
       'description': description,
       'type': type,
       'parent_id': parentId,
     };
+    if (id != null) payload['id'] = id;
     if (id == null) {
       await _db.from('categories').insert(payload);
     } else {
@@ -189,8 +189,10 @@ class AdminService {
 
   /// Notification for a user (used by admin broadcasts).
   Future<void> broadcast(String title, String body) async {
+    final user = _db.auth.currentUser;
+    if (user == null) throw StateError('No authenticated user to broadcast from.');
     final profiles = await _db.from('profiles').select('id').eq('is_active', true);
-    final adminId = _db.auth.currentUser!.id;
+    final adminId = user.id;
     final rows = [
       for (final p in profiles)
         {
