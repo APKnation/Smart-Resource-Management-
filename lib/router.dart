@@ -10,8 +10,6 @@ import 'screens/admin/roles_screen.dart';
 import 'screens/admin/settings_screen.dart';
 import 'screens/admin/users_screen.dart';
 import 'screens/auth/login_screen.dart';
-import 'screens/auth/register_screen.dart';
-import 'screens/dashboard_screen.dart';
 import 'screens/favorites_screen.dart';
 import 'screens/my_uploads_screen.dart';
 import 'screens/notifications_screen.dart';
@@ -19,6 +17,9 @@ import 'screens/profile_screen.dart';
 import 'screens/resource_detail_screen.dart';
 import 'screens/resource_form_screen.dart';
 import 'screens/resources_screen.dart';
+import 'screens/hrms/inventory_screen.dart';
+import 'screens/hrms/movements_screen.dart';
+import 'screens/hrms/facilities_screen.dart';
 import 'shell.dart';
 
 GoRouter buildRouter(AppState state) {
@@ -27,7 +28,7 @@ GoRouter buildRouter(AppState state) {
     redirect: (context, goState) {
       final loggedIn = state.loggedIn;
       final loc = goState.matchedLocation;
-      final onAuthPage = loc == Routes.login || loc == Routes.register;
+      final onAuthPage = loc == Routes.login;
       if (!loggedIn && !onAuthPage) return Routes.login;
       if (loggedIn && onAuthPage) return Routes.dashboard;
       return null;
@@ -38,17 +39,25 @@ GoRouter buildRouter(AppState state) {
         path: Routes.login,
         builder: (context, goState) => LoginScreen(state: state),
       ),
-      GoRoute(
-        path: Routes.register,
-        builder: (context, goState) => RegisterScreen(state: state),
-      ),
       ShellRoute(
         builder: (context, goState, child) =>
             AppShell(state: state, child: child),
         routes: [
           GoRoute(
             path: Routes.dashboard,
-            builder: (context, goState) => const DashboardScreen(),
+            builder: (context, goState) => const InventoryScreen(),
+          ),
+          GoRoute(
+            path: Routes.inventory,
+            builder: (context, goState) => const InventoryScreen(),
+          ),
+          GoRoute(
+            path: Routes.movements,
+            builder: (context, goState) => const MovementsScreen(),
+          ),
+          GoRoute(
+            path: Routes.facilities,
+            builder: (context, goState) => const FacilitiesScreen(),
           ),
           GoRoute(
             path: Routes.resources,
@@ -64,15 +73,13 @@ GoRouter buildRouter(AppState state) {
           ),
           GoRoute(
             path: '${Routes.resources}/:id',
-            builder: (context, goState) => ResourceDetailScreen(
-              resourceId: goState.pathParameters['id']!,
-            ),
+            builder: (context, goState) =>
+                ResourceDetailScreen(resourceId: goState.pathParameters['id']!),
           ),
           GoRoute(
             path: '${Routes.resources}/:id/edit',
-            builder: (context, goState) => ResourceFormScreen(
-              resourceId: goState.pathParameters['id'],
-            ),
+            builder: (context, goState) =>
+                ResourceFormScreen(resourceId: goState.pathParameters['id']),
           ),
           GoRoute(
             path: Routes.favorites,

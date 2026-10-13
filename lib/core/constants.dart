@@ -2,7 +2,7 @@
 library;
 
 class App {
-  static const name = 'E-Resource Portal';
+  static const name = 'Hospital Resource Management';
   static const version = '1.0.0+1';
 }
 
@@ -11,6 +11,9 @@ class Routes {
   static const login = '/login';
   static const register = '/register';
   static const dashboard = '/';
+  static const inventory = '/inventory';
+  static const movements = '/stock-movements';
+  static const facilities = '/facilities';
   static const resources = '/resources';
   static const myUploads = '/my-uploads';
   static const upload = '/resources/new';
@@ -29,8 +32,20 @@ class Routes {
 /// Allowed upload file extensions (kept in sync with settings.allowed_file_types seed).
 class FileRules {
   static const allowedExtensions = [
-    'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt',
-    'mp4', 'mp3', 'jpg', 'jpeg', 'png', 'zip',
+    'pdf',
+    'doc',
+    'docx',
+    'ppt',
+    'pptx',
+    'xls',
+    'xlsx',
+    'txt',
+    'mp4',
+    'mp3',
+    'jpg',
+    'jpeg',
+    'png',
+    'zip',
   ];
   static const maxFileSizeMb = 100;
 }

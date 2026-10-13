@@ -14,26 +14,96 @@ class AppShell extends StatelessWidget {
   final Widget child;
 
   static const _userDestinations = [
-    (route: Routes.dashboard, label: 'Dashboard', icon: Icons.dashboard_outlined, activeIcon: Icons.dashboard),
-    (route: Routes.resources, label: 'Resources', icon: Icons.library_books_outlined, activeIcon: Icons.library_books),
-    (route: Routes.favorites, label: 'Favorites', icon: Icons.star_border, activeIcon: Icons.star),
-    (route: Routes.notifications, label: 'Notifications', icon: Icons.notifications_outlined, activeIcon: Icons.notifications),
-    (route: Routes.profile, label: 'Profile', icon: Icons.person_outline, activeIcon: Icons.person),
+    (
+      route: Routes.inventory,
+      label: 'Inventory',
+      icon: Icons.inventory_2_outlined,
+      activeIcon: Icons.inventory_2,
+    ),
+    (
+      route: Routes.movements,
+      label: 'Movements',
+      icon: Icons.swap_horiz_outlined,
+      activeIcon: Icons.swap_horiz,
+    ),
+    (
+      route: Routes.facilities,
+      label: 'Facilities',
+      icon: Icons.domain_outlined,
+      activeIcon: Icons.domain,
+    ),
+    (
+      route: Routes.notifications,
+      label: 'Notifications',
+      icon: Icons.notifications_outlined,
+      activeIcon: Icons.notifications,
+    ),
+    (
+      route: Routes.profile,
+      label: 'Profile',
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+    ),
   ];
 
   static const _staffDestinations = [
-    (route: Routes.myUploads, label: 'My Uploads', icon: Icons.upload_file_outlined, activeIcon: Icons.upload_file),
-    (route: Routes.upload, label: 'Upload', icon: Icons.add_circle_outline, activeIcon: Icons.add_circle),
+    (
+      route: Routes.myUploads,
+      label: 'My Uploads',
+      icon: Icons.upload_file_outlined,
+      activeIcon: Icons.upload_file,
+    ),
+    (
+      route: Routes.upload,
+      label: 'Upload',
+      icon: Icons.add_circle_outline,
+      activeIcon: Icons.add_circle,
+    ),
   ];
 
   static const _adminDestinations = [
-    (route: Routes.approvals, label: 'Approvals', icon: Icons.fact_check_outlined, activeIcon: Icons.fact_check),
-    (route: Routes.categories, label: 'Categories', icon: Icons.category_outlined, activeIcon: Icons.category),
-    (route: Routes.users, label: 'Users', icon: Icons.groups_outlined, activeIcon: Icons.groups),
-    (route: Routes.roles, label: 'Roles', icon: Icons.verified_user_outlined, activeIcon: Icons.verified_user),
-    (route: Routes.reports, label: 'Reports', icon: Icons.bar_chart_outlined, activeIcon: Icons.bar_chart),
-    (route: Routes.audit, label: 'Audit Trail', icon: Icons.receipt_long_outlined, activeIcon: Icons.receipt_long),
-    (route: Routes.settings, label: 'Settings', icon: Icons.settings_outlined, activeIcon: Icons.settings),
+    (
+      route: Routes.approvals,
+      label: 'Approvals',
+      icon: Icons.fact_check_outlined,
+      activeIcon: Icons.fact_check,
+    ),
+    (
+      route: Routes.categories,
+      label: 'Categories',
+      icon: Icons.category_outlined,
+      activeIcon: Icons.category,
+    ),
+    (
+      route: Routes.users,
+      label: 'Users',
+      icon: Icons.groups_outlined,
+      activeIcon: Icons.groups,
+    ),
+    (
+      route: Routes.roles,
+      label: 'Roles',
+      icon: Icons.verified_user_outlined,
+      activeIcon: Icons.verified_user,
+    ),
+    (
+      route: Routes.reports,
+      label: 'Reports',
+      icon: Icons.bar_chart_outlined,
+      activeIcon: Icons.bar_chart,
+    ),
+    (
+      route: Routes.audit,
+      label: 'Audit Trail',
+      icon: Icons.receipt_long_outlined,
+      activeIcon: Icons.receipt_long,
+    ),
+    (
+      route: Routes.settings,
+      label: 'Settings',
+      icon: Icons.settings_outlined,
+      activeIcon: Icons.settings,
+    ),
   ];
 
   @override
@@ -43,16 +113,18 @@ class AppShell extends StatelessWidget {
     final wide = MediaQuery.sizeOf(context).width >= 900;
     final profile = state.me;
 
-    final destinations = <({String route, String label, IconData icon, IconData activeIcon})>[
-      ..._userDestinations,
-      if (state.canUpload) ..._staffDestinations,
-      if (state.canManageResources) ..._adminDestinations,
-    ];
+    final destinations =
+        <({String route, String label, IconData icon, IconData activeIcon})>[
+          ..._userDestinations,
+        ];
 
-    final selectedIndex = destinations.indexWhere((d) =>
-        loc == d.route ||
-        (d.route == Routes.resources && loc.startsWith('${Routes.resources}/')) ||
-        (d.route == Routes.dashboard && loc == Routes.dashboard));
+    final selectedIndex = destinations.indexWhere(
+      (d) =>
+          loc == d.route ||
+          (d.route == Routes.resources &&
+              loc.startsWith('${Routes.resources}/')) ||
+          (d.route == Routes.dashboard && loc == Routes.dashboard),
+    );
 
     Widget body = child;
 
@@ -105,7 +177,9 @@ class AppShell extends StatelessWidget {
                 child: Column(
                   children: [
                     CircleAvatar(
-                      child: Text(initialsOf(profile?.fullName ?? profile?.email ?? '?')),
+                      child: Text(
+                        initialsOf(profile?.fullName ?? profile?.email ?? '?'),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     if (profile != null)
@@ -137,19 +211,20 @@ class AppShell extends StatelessWidget {
       );
     }
 
-    return AppStateScope(
-      state: state,
-      child: body,
-    );
+    return AppStateScope(state: state, child: body);
   }
 
   String _titleFor(String loc) {
-    for (final d in [..._userDestinations, ..._staffDestinations, ..._adminDestinations]) {
+    for (final d in [
+      ..._userDestinations,
+      ..._staffDestinations,
+      ..._adminDestinations,
+    ]) {
       if (loc == d.route) return d.label;
     }
     if (loc.startsWith('${Routes.resources}/')) return 'Resource';
     if (loc == Routes.upload) return 'Upload Resource';
-    return 'E-Resource Portal';
+    return 'Hospital Resource Management';
   }
 }
 
@@ -158,7 +233,7 @@ class _Drawer extends StatelessWidget {
 
   final AppState state;
   final List<({String route, String label, IconData icon, IconData activeIcon})>
-      destinations;
+  destinations;
 
   @override
   Widget build(BuildContext context) {

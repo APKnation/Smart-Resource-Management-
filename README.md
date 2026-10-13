@@ -1,117 +1,47 @@
-# E-Resource Portal
+# Hospital Resource Management System
 
-A full-featured **Electronic Resources Management System** built with **Flutter** (**Web + Android**) and **Supabase** (Postgres, Auth, Storage, Realtime).
+This repository is being transitioned from an electronic resource portal into a hospital resource management system (HRMS) built with Flutter and Supabase.
 
-## Features
+## Current implementation status
 
-| Area | What's included |
-|---|---|
-| **Accounts & Auth** | Register, log in, log out, password reset, self-service profile editing |
-| **Roles** | Admin, Librarian, Staff, User — managed by admins, enforced in the UI **and** the database (RLS) |
-| **Resource management** | Add, edit, view, delete resources (PDF, docs, slides, video, audio, images, links) |
-| **Categorization** | Multi-category tagging by subject / type / department / institution, with parent categories |
-| **Upload** | Client-validated uploads (type + size) to a **private** Supabase Storage bucket |
-| **Search** | Keyword search across title/description/author + filters by type and category |
-| **View & download** | Short-lived signed URLs; every view/download is recorded |
-| **Access control** | Role-based UI + Row Level Security policies at the database level |
-| **Approval workflow** | Staff uploads stay *pending* until an admin/librarian approves; auto-notifications |
-| **Versioning** | File replacement auto-snapshots a version; restore any prior version |
-| **Access tracking** | Views and downloads logged per user (auditable usage history) |
-| **Favorites** | Bookmark resources for quick access |
-| **Notifications** | Realtime in-app notifications (new submissions, approvals, rejections, broadcasts) |
-| **Reports & analytics** | Usage stats, 14-day download chart, most-downloaded list, recent activity |
-| **User management** | Admins list/search users, change roles, deactivate/reactivate accounts |
-| **Audit trail** | Automatic audit log of uploads, updates, approvals, deletions, broadcasts |
-| **Availability** | Resources can be active, inactive, restricted, or archived |
-| **System administration** | Site settings, category management, role/permission definitions, broadcast messages |
+The first HRMS database foundation is in [`supabase/migrations/001_hrms_inventory_foundation.sql`](supabase/migrations/001_hrms_inventory_foundation.sql). It adds tenant-scoped hospitals, departments, memberships, warehouses, inventory items, medicine batches, stock balances, and an append-only movement history. A PostgreSQL function applies stock movements atomically, checks membership and permissions, prevents negative stock, and blocks issue of expired or quarantined batches.
 
-## Project layout
+The Flutter app now has hospital-scoped inventory browsing, item creation, medicine batch registration, stock receipt/issue/adjustment/return/wastage entry with movement history, and hospital administrator screens for departments and warehouses. Public self-registration has been removed from the sign-in flow; hospital access must be provisioned by an administrator. The original e-resource screens remain in the source but are no longer part of the main navigation. Procurement, department requests/approvals, equipment maintenance, membership administration, operational reports, durable notifications, and offline synchronization still need implementation. Do not treat this repository as a production-ready hospital inventory system.
 
-```
-lib/
-  core/          constants, env, theme, utils
-  models/        data models + enums
-  services/      auth, resources, admin (Supabase calls)
-  app_state.dart global state (session, profile, favorites, notifications)
-  router.dart    go_router config with auth guard
-  shell.dart     responsive NavigationRail / Drawer shell
-  widgets/       shared widgets
-  screens/
-    auth/        login, register
-    admin/       approvals, categories, users, roles, reports, audit, settings
-    ...          dashboard, resources, resource detail/form, favorites,
-                 notifications, profile
-supabase/
-  schema.sql     the entire database schema — run this once
-android/        Android platform (INTERNET permission pre-configured)
-web/            Web platform (PWA manifest pre-configured)
-```
+## Stack
 
-## Setup
+- Flutter for Web and Android
+- Supabase Auth, PostgreSQL, Storage, and Realtime
+- PostgreSQL Row Level Security for tenant-scoped data
+- `ChangeNotifier` app state and `go_router` navigation
 
-### 1. Create a Supabase project
+## Database setup
 
-1. Go to [supabase.com](https://supabase.com) and create a project (free tier is fine).
-2. Open **SQL Editor** → new query → paste the full contents of **`supabase/schema.sql`** → **Run**.
-   This creates all tables, enums, RLS policies, triggers (profile creation, versioning,
-   audit logging, notifications), the private `resources` storage bucket, and seed data
-   (4 roles, default settings).
+1. Create a Supabase project and configure authentication.
+2. Apply the existing profile/auth schema required by the current app, then apply migrations in order from `supabase/migrations/` using the Supabase CLI or SQL editor.
+3. Provision the initial hospital, department, warehouse, and administrator membership through a trusted administrative process. Membership changes are intentionally not exposed to ordinary client users.
+4. Keep the Supabase service-role key and database credentials out of Flutter and Web builds. Configure only the project URL and publishable/anon key in the local environment.
+5. Review and test all RLS policies in a non-production project before adding real operational data.
 
-### 2. Create the first administrator
+The inventory tables are isolated by `hospital_id`. Authenticated users can read records only for hospitals where they have an active membership. Stock balances and movement records cannot be directly inserted, updated, or deleted by client roles; use `record_stock_movement(...)` for receipts, issues, adjustments, returns, wastage, and transfer legs.
 
-1. In the app (or Dashboard → Authentication → Users), sign up with e.g. `admin@yourorg.edu`.
-2. In **SQL Editor**, run:
-
-   ```sql
-   update public.profiles set role = 'admin' where email = 'admin@yourorg.edu';
-   ```
-
-   That account now sees the full admin console. New self-registered users get the
-   lowest-privilege role by default; promote them from **Users** in the app.
-
-### 3. Configure the app
-
-Create a `.env` file at the project root (or edit the existing placeholder):
-
-```
-SUPABASE_URL=https://<your-project>.supabase.co
-SUPABASE_ANON_KEY=<your-anon-key>
-```
-
-Both values are in Supabase Dashboard → **Settings → API**.
-
-> The `.env` file is loaded as a Flutter asset (already configured in `pubspec.yaml`).
-> **Do not commit real keys** — `.env` is git-ignored by default; `.env.example` documents the format.
-
-### 4. Run
+## Run the Flutter app
 
 ```bash
 flutter pub get
-
-# Web (Chrome)
 flutter run -d chrome
-
-# Android device / emulator
 flutter run -d android
-
-# Release builds
-flutter build web
-flutter build apk --release
 ```
 
-## How access control works
+Configure the Supabase project URL and publishable client key using the environment mechanism in `lib/core/env.dart`. Never include a service-role key in the client.
 
-- **Users** see approved + active resources, can search, view, download, favorite.
-- **Staff** can additionally upload (their submissions go to the approval queue) and edit their own items.
-- **Librarians** manage resources and categories, approve/reject submissions, see reports and the audit trail.
-- **Admins** do everything, including user roles, system settings, and broadcasts.
-- All of this is enforced twice: in the Flutter UI (navigation/actions) and in Postgres via
-  Row Level Security policies, so even direct API calls with the anon key cannot bypass it.
+## Planned delivery sequence
 
-## Tech notes
+1. Hospital onboarding, memberships, roles, and location administration.
+2. Inventory screens and validated receiving, issue, transfer, count, and adjustment workflows.
+3. Medicine FEFO, expiry, recall, quarantine, and disposal workflows.
+4. Department requests, approvals, suppliers, requisitions, purchase orders, and goods receipts.
+5. Equipment registry, maintenance, alerts, reports, audit views, and notifications.
+6. Offline behavior, accessibility, security/concurrency coverage, and production operations.
 
-- **State**: `AppState` (`ChangeNotifier`) + `InheritedNotifier`; no heavy frameworks.
-- **Routing**: `go_router` with a redirect guard (unauthenticated users land on `/login`).
-- **Realtime**: notifications arrive over a Supabase Postgres-Changes channel filtered to the signed-in user.
-- **Files**: uploads go straight from the client to Storage; downloads use 5-minute signed URLs.
-- **Versioning**: a DB trigger snapshots the previous file into `resource_versions` whenever a resource's file path changes; restore re-points the resource and snapshots first.
+Each module needs matching Flutter screens and services, database authorization, validation and error states, audit behavior, and automated coverage before it should be considered complete.

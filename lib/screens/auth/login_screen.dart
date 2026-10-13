@@ -42,13 +42,17 @@ class _LoginScreenState extends State<LoginScreen> {
     } on AuthException catch (e) {
       final msg = e.message.toLowerCase();
       if (msg.contains('invalid login credentials')) {
-        setState(() => _error =
-            'Wrong email or password. If you just registered, your account '
-            'may still need confirmation.');
+        setState(
+          () => _error =
+              'Wrong email or password. If you just registered, your account '
+              'may still need confirmation.',
+        );
       } else if (msg.contains('not confirmed')) {
-        setState(() => _error =
-            'Please confirm your email first (check your inbox), or ask an '
-            'admin to confirm your account.');
+        setState(
+          () => _error =
+              'Please confirm your email first (check your inbox), or ask an '
+              'admin to confirm your account.',
+        );
       } else {
         setState(() => _error = e.message);
       }
@@ -76,16 +80,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Icon(Icons.local_library,
-                          size: 44, color: Theme.of(context).colorScheme.primary),
+                      Icon(
+                        Icons.local_hospital_outlined,
+                        size: 44,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       const SizedBox(height: 8),
-                      Text('E-Resource Portal',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.headlineSmall),
+                      Text(
+                        'Hospital Resource Management',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                       const SizedBox(height: 4),
-                      Text('Sign in to continue',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodySmall),
+                      Text(
+                        'Sign in to continue',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: _email,
@@ -95,8 +106,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           labelText: 'Email',
                           prefixIcon: Icon(Icons.email_outlined),
                         ),
-                        validator: (v) =>
-                            (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+                        validator: (v) => (v == null || !v.contains('@'))
+                            ? 'Enter a valid email'
+                            : null,
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -108,9 +120,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           labelText: 'Password',
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
-                            onPressed: () => setState(() => _obscure = !_obscure),
+                            onPressed: () =>
+                                setState(() => _obscure = !_obscure),
                             icon: Icon(
-                                _obscure ? Icons.visibility_off : Icons.visibility),
+                              _obscure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
                           ),
                         ),
                         validator: (v) => (v == null || v.isEmpty)
@@ -119,8 +135,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       if (_error != null) ...[
                         const SizedBox(height: 12),
-                        Text(_error!,
-                            style: const TextStyle(color: Colors.redAccent)),
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: Colors.redAccent),
+                        ),
                       ],
                       const SizedBox(height: 20),
                       FilledButton(
@@ -129,13 +147,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? const SizedBox(
                                 height: 18,
                                 width: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2))
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Text('Sign in'),
                       ),
                       const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () => context.push(Routes.register),
-                        child: const Text("Don't have an account? Register"),
+                      Text(
+                        'Hospital accounts are created by an administrator. Contact your hospital system administrator for access.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
