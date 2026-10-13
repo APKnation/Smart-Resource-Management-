@@ -15,6 +15,12 @@ class AppShell extends StatelessWidget {
 
   static const _userDestinations = [
     (
+      route: Routes.dashboard,
+      label: 'Dashboard',
+      icon: Icons.dashboard_outlined,
+      activeIcon: Icons.dashboard,
+    ),
+    (
       route: Routes.inventory,
       label: 'Inventory',
       icon: Icons.inventory_2_outlined,
@@ -125,6 +131,14 @@ class AppShell extends StatelessWidget {
               loc.startsWith('${Routes.resources}/')) ||
           (d.route == Routes.dashboard && loc == Routes.dashboard),
     );
+    final bottomDestinations = destinations
+        .where((d) => d.route != Routes.facilities)
+        .toList();
+    final bottomSelectedIndex = bottomDestinations.indexWhere(
+      (d) =>
+          loc == d.route ||
+          (d.route == Routes.dashboard && loc == Routes.dashboard),
+    );
 
     Widget body = child;
 
@@ -147,10 +161,13 @@ class AppShell extends StatelessWidget {
         drawer: _Drawer(state: state, destinations: destinations),
         body: child,
         bottomNavigationBar: NavigationBar(
-          selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
-          onDestinationSelected: (i) => context.go(destinations[i].route),
+          selectedIndex: bottomSelectedIndex.clamp(
+            0,
+            bottomDestinations.length - 1,
+          ),
+          onDestinationSelected: (i) => context.go(bottomDestinations[i].route),
           destinations: [
-            for (final d in destinations)
+            for (final d in bottomDestinations)
               NavigationDestination(
                 icon: d.route == Routes.notifications
                     ? Badge(

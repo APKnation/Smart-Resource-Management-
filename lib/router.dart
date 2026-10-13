@@ -20,6 +20,7 @@ import 'screens/resources_screen.dart';
 import 'screens/hrms/inventory_screen.dart';
 import 'screens/hrms/movements_screen.dart';
 import 'screens/hrms/facilities_screen.dart';
+import 'screens/hrms/dashboard_screen.dart';
 import 'shell.dart';
 
 GoRouter buildRouter(AppState state) {
@@ -45,7 +46,7 @@ GoRouter buildRouter(AppState state) {
         routes: [
           GoRoute(
             path: Routes.dashboard,
-            builder: (context, goState) => const InventoryScreen(),
+            builder: (context, goState) => const HrmsDashboardScreen(),
           ),
           GoRoute(
             path: Routes.inventory,

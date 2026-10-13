@@ -64,6 +64,24 @@ class InventoryItem {
       );
 }
 
+class HrmsDashboardData {
+  const HrmsDashboardData({
+    required this.items,
+    required this.lowStockItems,
+    required this.stockedItemsCount,
+    required this.recentMovements,
+    required this.expiringBatchCount,
+    required this.expiredBatchCount,
+  });
+
+  final List<InventoryItem> items;
+  final List<InventoryItem> lowStockItems;
+  final int stockedItemsCount;
+  final List<Map<String, dynamic>> recentMovements;
+  final int expiringBatchCount;
+  final int expiredBatchCount;
+}
+
 class HrmsService {
   final SupabaseClient _db = Supabase.instance.client;
 
@@ -187,6 +205,41 @@ class HrmsService {
         .map((row) => InventoryItem.fromMap(row, quantities[row['id']] ?? 0))
         .toList();
   }
+
+  Future<HrmsDashboardData> dashboard(String hospitalId) async {
+    final today = DateTime.now();
+    final todayText = _dateString(today);
+    final horizonText = _dateString(today.add(const Duration(days: 30)));
+    final results = await Future.wait<dynamic>([
+      inventory(hospitalId),
+      movements(hospitalId),
+      _db
+          .from('inventory_batches')
+          .select('id')
+          .eq('hospital_id', hospitalId)
+          .eq('is_quarantined', false)
+          .gte('expires_on', todayText)
+          .lte('expires_on', horizonText),
+      _db
+          .from('inventory_batches')
+          .select('id')
+          .eq('hospital_id', hospitalId)
+          .eq('is_quarantined', false)
+          .lt('expires_on', todayText),
+    ]);
+    final items = results[0] as List<InventoryItem>;
+    return HrmsDashboardData(
+      items: items,
+      lowStockItems: items.where((item) => item.lowStock).toList(),
+      stockedItemsCount: items.where((item) => item.quantity > 0).length,
+      recentMovements: results[1] as List<Map<String, dynamic>>,
+      expiringBatchCount: (results[2] as List).length,
+      expiredBatchCount: (results[3] as List).length,
+    );
+  }
+
+  String _dateString(DateTime date) =>
+      '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
   Future<List<Map<String, dynamic>>> batches(
     String hospitalId,
