@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/hrms_service.dart';
+import 'hrms_form_widgets.dart';
 
 class FacilitiesScreen extends StatefulWidget {
   const FacilitiesScreen({super.key});
@@ -227,21 +228,37 @@ class _FacilitiesScreenState extends State<FacilitiesScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add department'),
-        content: Form(
-          key: key,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: name,
-                decoration: const InputDecoration(labelText: 'Name'),
-                validator: _required,
+        content: SizedBox(
+          width: 520,
+          child: Form(
+            key: key,
+            child: HrmsFormSection(
+              title: 'Department details',
+              description:
+                  'Create a department, unit, ward, pharmacy, or service.',
+              icon: Icons.domain_outlined,
+              child: HrmsFormGrid(
+                children: [
+                  TextFormField(
+                    controller: name,
+                    decoration: const InputDecoration(
+                      labelText: 'Department name *',
+                      prefixIcon: Icon(Icons.business_outlined),
+                    ),
+                    validator: _required,
+                  ),
+                  TextFormField(
+                    controller: code,
+                    decoration: const InputDecoration(
+                      labelText: 'Department code',
+                      hintText: 'Optional',
+                      prefixIcon: Icon(Icons.tag),
+                    ),
+                    textCapitalization: TextCapitalization.characters,
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: code,
-                decoration: const InputDecoration(labelText: 'Code (optional)'),
-              ),
-            ],
+            ),
           ),
         ),
         actions: [
@@ -280,44 +297,61 @@ class _FacilitiesScreenState extends State<FacilitiesScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, update) => AlertDialog(
           title: const Text('Add warehouse'),
-          content: Form(
-            key: key,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: name,
-                  decoration: const InputDecoration(labelText: 'Name'),
-                  validator: _required,
-                ),
-                TextFormField(
-                  controller: location,
-                  decoration: const InputDecoration(
-                    labelText: 'Location (optional)',
-                  ),
-                ),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<String?>(
-                  initialValue: departmentId,
-                  decoration: const InputDecoration(
-                    labelText: 'Department (optional)',
-                  ),
-                  items: [
-                    const DropdownMenuItem<String?>(
-                      value: null,
-                      child: Text('Hospital-wide'),
-                    ),
-                    for (final dept in departments.where(
-                      (d) => d['is_active'] == true,
-                    ))
-                      DropdownMenuItem<String?>(
-                        value: dept['id'] as String,
-                        child: Text(dept['name'] as String),
+          content: SizedBox(
+            width: 520,
+            child: Form(
+              key: key,
+              child: HrmsFormSection(
+                title: 'Warehouse details',
+                description: 'Set up a stock location and optionally link it to a department.',
+                icon: Icons.warehouse_outlined,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: name,
+                      decoration: const InputDecoration(
+                        labelText: 'Warehouse name *',
+                        prefixIcon: Icon(Icons.warehouse_outlined),
                       ),
+                      validator: _required,
+                    ),
+                    const SizedBox(height: 12),
+                    HrmsFormGrid(
+                      children: [
+                        TextFormField(
+                          controller: location,
+                          decoration: const InputDecoration(
+                            labelText: 'Location / room',
+                            hintText: 'Optional',
+                            prefixIcon: Icon(Icons.place_outlined),
+                          ),
+                        ),
+                        DropdownButtonFormField<String?>(
+                          initialValue: departmentId,
+                          decoration: const InputDecoration(
+                            labelText: 'Department',
+                            prefixIcon: Icon(Icons.domain_outlined),
+                          ),
+                          items: [
+                            const DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text('Hospital-wide'),
+                            ),
+                            for (final dept in departments.where(
+                              (d) => d['is_active'] == true,
+                            ))
+                              DropdownMenuItem<String?>(
+                                value: dept['id'] as String,
+                                child: Text(dept['name'] as String),
+                              ),
+                          ],
+                          onChanged: (v) => update(() => departmentId = v),
+                        ),
+                      ],
+                    ),
                   ],
-                  onChanged: (v) => update(() => departmentId = v),
                 ),
-              ],
+              ),
             ),
           ),
           actions: [

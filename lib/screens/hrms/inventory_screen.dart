@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/hrms_service.dart';
+import 'hrms_form_widgets.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -266,56 +267,108 @@ class _InventoryScreenState extends State<InventoryScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('New inventory item'),
-        content: Form(
-          key: form,
+        content: SizedBox(
+          width: 560,
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: code,
-                  decoration: const InputDecoration(labelText: 'Item code'),
-                  validator: _required,
-                ),
-                TextFormField(
-                  controller: name,
-                  decoration: const InputDecoration(labelText: 'Name'),
-                  validator: _required,
-                ),
-                DropdownButtonFormField<String>(
-                  value: kind,
-                  decoration: const InputDecoration(labelText: 'Type'),
-                  items: const [
-                    DropdownMenuItem(value: 'supply', child: Text('Supply')),
-                    DropdownMenuItem(
-                      value: 'medicine',
-                      child: Text('Medicine'),
+            child: Form(
+              key: form,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  HrmsFormSection(
+                    title: 'Item details',
+                    description:
+                        'Identify this supply or medicine in your catalog.',
+                    icon: Icons.inventory_2_outlined,
+                    child: HrmsFormGrid(
+                      children: [
+                        TextFormField(
+                          controller: code,
+                          decoration: const InputDecoration(
+                            labelText: 'Item code *',
+                            prefixIcon: Icon(Icons.qr_code_2),
+                          ),
+                          textCapitalization: TextCapitalization.characters,
+                          validator: _required,
+                        ),
+                        TextFormField(
+                          controller: name,
+                          decoration: const InputDecoration(
+                            labelText: 'Item name *',
+                            prefixIcon: Icon(Icons.label_outline),
+                          ),
+                          validator: _required,
+                        ),
+                        DropdownButtonFormField<String>(
+                          initialValue: kind,
+                          decoration: const InputDecoration(
+                            labelText: 'Item type *',
+                            prefixIcon: Icon(Icons.category_outlined),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'supply',
+                              child: Text('Medical supply'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'medicine',
+                              child: Text('Medicine'),
+                            ),
+                          ],
+                          onChanged: (v) {
+                            if (v != null) kind = v;
+                          },
+                        ),
+                        TextFormField(
+                          controller: unit,
+                          decoration: const InputDecoration(
+                            labelText: 'Unit of measure *',
+                            hintText: 'e.g. box, vial, each',
+                            prefixIcon: Icon(Icons.straighten),
+                          ),
+                          validator: _required,
+                        ),
+                      ],
                     ),
-                  ],
-                  onChanged: (v) {
-                    if (v != null) kind = v;
-                  },
-                ),
-                TextFormField(
-                  controller: unit,
-                  decoration: const InputDecoration(
-                    labelText: 'Unit (e.g. box, vial)',
                   ),
-                  validator: _required,
-                ),
-                TextFormField(
-                  controller: min,
-                  decoration: const InputDecoration(labelText: 'Minimum stock'),
-                  keyboardType: TextInputType.number,
-                  validator: _number,
-                ),
-                TextFormField(
-                  controller: reorder,
-                  decoration: const InputDecoration(labelText: 'Reorder level'),
-                  keyboardType: TextInputType.number,
-                  validator: _number,
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  HrmsFormSection(
+                    title: 'Stock thresholds',
+                    description:
+                        'Used to flag low stock and guide replenishment.',
+                    icon: Icons.notifications_active_outlined,
+                    child: HrmsFormGrid(
+                      children: [
+                        TextFormField(
+                          controller: min,
+                          decoration: const InputDecoration(
+                            labelText: 'Minimum stock',
+                            helperText:
+                                'Show a low-stock warning below this level',
+                            prefixIcon: Icon(Icons.warning_amber_outlined),
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          validator: _number,
+                        ),
+                        TextFormField(
+                          controller: reorder,
+                          decoration: const InputDecoration(
+                            labelText: 'Reorder level',
+                            helperText: 'Suggested point to replenish stock',
+                            prefixIcon: Icon(Icons.replay_outlined),
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          validator: _number,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -429,93 +482,128 @@ class _InventoryScreenState extends State<InventoryScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, update) => AlertDialog(
           title: Text('Stock movement · ${item.name}'),
-          content: Form(
-            key: form,
+          content: SizedBox(
+            width: 560,
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DropdownButtonFormField<String>(
-                    initialValue: kind,
-                    decoration: const InputDecoration(labelText: 'Operation'),
-                    items: [
-                      if (canManage)
-                        const DropdownMenuItem(
-                          value: 'receipt',
-                          child: Text('Receive stock'),
-                        ),
-                      const DropdownMenuItem(
-                        value: 'issue',
-                        child: Text('Issue stock'),
-                      ),
-                      if (canManage)
-                        const DropdownMenuItem(
-                          value: 'adjustment',
-                          child: Text('Positive adjustment'),
-                        ),
-                      if (canManage)
-                        const DropdownMenuItem(
-                          value: 'wastage',
-                          child: Text('Record wastage'),
-                        ),
-                      const DropdownMenuItem(
-                        value: 'return',
-                        child: Text('Return to stock'),
-                      ),
-                    ],
-                    onChanged: (v) {
-                      if (v != null) update(() => kind = v);
-                    },
-                  ),
-                  DropdownButtonFormField<String>(
-                    value: warehouseId,
-                    decoration: const InputDecoration(labelText: 'Warehouse'),
-                    items: [
-                      for (final w in _warehouses)
-                        DropdownMenuItem(value: w.id, child: Text(w.name)),
-                    ],
-                    onChanged: (v) {
-                      if (v != null) update(() => warehouseId = v);
-                    },
-                  ),
-                  if (batches.isNotEmpty)
-                    DropdownButtonFormField<String?>(
-                      value: batchId,
-                      decoration: const InputDecoration(labelText: 'Batch'),
-                      items: [
-                        for (final b in batches)
-                          DropdownMenuItem<String?>(
-                            value: b['id'] as String,
-                            child: Text(
-                              '${b['batch_number']}${b['expires_on'] == null ? '' : ' · exp ${b['expires_on']}'}',
+              child: Form(
+                key: form,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    HrmsFormSection(
+                      title: 'Movement details',
+                      description: 'Choose an authorized stock operation and its location.',
+                      icon: Icons.swap_horiz,
+                      child: HrmsFormGrid(
+                        minFieldWidth: 200,
+                        children: [
+                          DropdownButtonFormField<String>(
+                            initialValue: kind,
+                            decoration: const InputDecoration(
+                              labelText: 'Operation *',
+                              prefixIcon: Icon(Icons.compare_arrows),
+                            ),
+                            items: [
+                              if (canManage)
+                                const DropdownMenuItem(
+                                  value: 'receipt',
+                                  child: Text('Receive stock'),
+                                ),
+                              const DropdownMenuItem(
+                                value: 'issue',
+                                child: Text('Issue stock'),
+                              ),
+                              if (canManage)
+                                const DropdownMenuItem(
+                                  value: 'adjustment',
+                                  child: Text('Positive adjustment'),
+                                ),
+                              if (canManage)
+                                const DropdownMenuItem(
+                                  value: 'wastage',
+                                  child: Text('Record wastage'),
+                                ),
+                              const DropdownMenuItem(
+                                value: 'return',
+                                child: Text('Return to stock'),
+                              ),
+                            ],
+                            onChanged: (v) {
+                              if (v != null) update(() => kind = v);
+                            },
+                          ),
+                          DropdownButtonFormField<String>(
+                            initialValue: warehouseId,
+                            decoration: const InputDecoration(
+                              labelText: 'Warehouse *',
+                              prefixIcon: Icon(Icons.warehouse_outlined),
+                            ),
+                            items: [
+                              for (final w in _warehouses)
+                                DropdownMenuItem(
+                                  value: w.id,
+                                  child: Text(w.name),
+                                ),
+                            ],
+                            onChanged: (v) {
+                              if (v != null) update(() => warehouseId = v);
+                            },
+                          ),
+                          if (batches.isNotEmpty)
+                            DropdownButtonFormField<String?>(
+                              initialValue: batchId,
+                              decoration: const InputDecoration(
+                                labelText: 'Medicine batch *',
+                                prefixIcon: Icon(Icons.qr_code_2),
+                              ),
+                              items: [
+                                for (final b in batches)
+                                  DropdownMenuItem<String?>(
+                                    value: b['id'] as String,
+                                    child: Text(
+                                      '${b['batch_number']}${b['expires_on'] == null ? '' : ' · exp ${b['expires_on']}'}',
+                                    ),
+                                  ),
+                              ],
+                              onChanged: (v) => update(() => batchId = v),
+                              validator: (v) =>
+                                  v == null ? 'Select a batch' : null,
+                            ),
+                          TextFormField(
+                            controller: qty,
+                            decoration: InputDecoration(
+                              labelText: 'Quantity (${item.unit}) *',
+                              prefixIcon: const Icon(Icons.numbers),
+                              helperText: 'Enter a value greater than zero.',
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            validator: _positiveNumber,
+                          ),
+                          TextFormField(
+                            controller: reason,
+                            decoration: const InputDecoration(
+                              labelText: 'Reason *',
+                              hintText: 'e.g. Ward restock, delivery received',
+                              prefixIcon: Icon(Icons.notes),
+                            ),
+                            validator: _required,
+                          ),
+                          TextFormField(
+                            controller: ref,
+                            decoration: const InputDecoration(
+                              labelText: 'Reference (optional)',
+                              hintText:
+                                  'Invoice, request, or delivery reference',
+                              prefixIcon: Icon(Icons.tag),
                             ),
                           ),
-                      ],
-                      onChanged: (v) => update(() => batchId = v),
-                      validator: (v) => v == null ? 'Select a batch' : null,
+                        ],
+                      ),
                     ),
-                  TextFormField(
-                    controller: qty,
-                    decoration: InputDecoration(
-                      labelText: 'Quantity (${item.unit})',
-                    ),
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    validator: _positiveNumber,
-                  ),
-                  TextFormField(
-                    controller: reason,
-                    decoration: const InputDecoration(labelText: 'Reason'),
-                    validator: _required,
-                  ),
-                  TextFormField(
-                    controller: ref,
-                    decoration: const InputDecoration(
-                      labelText: 'Reference (optional)',
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -567,41 +655,50 @@ class _InventoryScreenState extends State<InventoryScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('New batch · ${item.name}'),
-        content: Form(
-          key: form,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: number,
-                decoration: const InputDecoration(
-                  labelText: 'Batch / lot number',
-                ),
-                validator: _required,
+        content: SizedBox(
+          width: 520,
+          child: Form(
+            key: form,
+            child: HrmsFormSection(
+              title: 'Batch traceability',
+              description: 'Capture the lot and expiry details printed on the medicine packaging.',
+              icon: Icons.qr_code_2,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: number,
+                    decoration: const InputDecoration(
+                      labelText: 'Batch / lot number *',
+                      prefixIcon: Icon(Icons.numbers),
+                    ),
+                    validator: _required,
+                    textCapitalization: TextCapitalization.characters,
+                  ),
+                  const SizedBox(height: 12),
+                  HrmsFormGrid(
+                    children: [
+                      HrmsDateField(
+                        controller: manufactured,
+                        label: 'Manufactured on',
+                      ),
+                      HrmsDateField(controller: expiry, label: 'Expiry date'),
+                      TextFormField(
+                        controller: cost,
+                        decoration: const InputDecoration(
+                          labelText: 'Unit cost',
+                          hintText: 'Optional',
+                          prefixIcon: Icon(Icons.payments_outlined),
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        validator: _optionalMoney,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: manufactured,
-                decoration: const InputDecoration(
-                  labelText: 'Manufactured on (YYYY-MM-DD)',
-                ),
-              ),
-              TextFormField(
-                controller: expiry,
-                decoration: const InputDecoration(
-                  labelText: 'Expires on (YYYY-MM-DD)',
-                ),
-                validator: _date,
-              ),
-              TextFormField(
-                controller: cost,
-                decoration: const InputDecoration(
-                  labelText: 'Unit cost (optional)',
-                ),
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
         actions: [
@@ -653,10 +750,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
       double.tryParse(v ?? '') == null || double.parse(v!) <= 0
       ? 'Enter a quantity above zero'
       : null;
-  String? _date(String? v) =>
-      v == null || v.trim().isEmpty || DateTime.tryParse(v.trim()) != null
+  String? _optionalMoney(String? v) =>
+      v == null ||
+          v.trim().isEmpty ||
+          (double.tryParse(v) != null && double.parse(v) >= 0)
       ? null
-      : 'Use YYYY-MM-DD';
+      : 'Enter zero or a positive amount';
   void _message(String value) =>
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(value)));
