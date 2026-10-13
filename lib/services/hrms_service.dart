@@ -330,4 +330,272 @@ class HrmsService {
       },
     );
   }
+
+  Future<List<Map<String, dynamic>>> requests(String hospitalId) async {
+    final rows = await _db
+        .from('resource_requests')
+        .select(
+          '*,departments(name),resource_request_lines(id,quantity,approved_quantity,inventory_items(name,item_code,unit))',
+        )
+        .eq('hospital_id', hospitalId)
+        .order('created_at', ascending: false)
+        .limit(200);
+    return rows.map((row) => Map<String, dynamic>.from(row)).toList();
+  }
+
+  Future<void> submitRequest({
+    required String hospitalId,
+    required String departmentId,
+    required String itemId,
+    required double quantity,
+    required String purpose,
+    required String priority,
+    String? requiredBy,
+  }) async {
+    final row = await _db
+        .from('resource_requests')
+        .insert({
+          'hospital_id': hospitalId,
+          'department_id': departmentId,
+          'requested_by': _db.auth.currentUser!.id,
+          'purpose': purpose.trim(),
+          'priority': priority,
+          'required_by': requiredBy,
+        })
+        .select('id')
+        .single();
+    await _db.from('resource_request_lines').insert({
+      'hospital_id': hospitalId,
+      'request_id': row['id'],
+      'item_id': itemId,
+      'quantity': quantity,
+    });
+  }
+
+  Future<void> reviewRequest(String id, String status, {String? note}) async {
+    await _db
+        .from('resource_requests')
+        .update({
+          'status': status,
+          'reviewed_by': _db.auth.currentUser!.id,
+          'review_note': note,
+        })
+        .eq('id', id);
+  }
+
+  Future<List<Map<String, dynamic>>> transfers(String hospitalId) async {
+    final rows = await _db
+        .from('stock_transfers')
+        .select(
+          '*,source:warehouses!stock_transfers_source_warehouse_id_fkey(name),destination:warehouses!stock_transfers_destination_warehouse_id_fkey(name),inventory_items(name,item_code),inventory_batches(batch_number)',
+        )
+        .eq('hospital_id', hospitalId)
+        .order('created_at', ascending: false)
+        .limit(200);
+    return rows.map((row) => Map<String, dynamic>.from(row)).toList();
+  }
+
+  Future<void> transferStock({
+    required String hospitalId,
+    required String sourceId,
+    required String destinationId,
+    required String itemId,
+    String? batchId,
+    required double quantity,
+    required String reason,
+    String? reference,
+  }) async {
+    await _db.rpc(
+      'hrms_transfer_stock',
+      params: {
+        'p_hospital_id': hospitalId,
+        'p_source_warehouse_id': sourceId,
+        'p_destination_warehouse_id': destinationId,
+        'p_item_id': itemId,
+        'p_batch_id': batchId,
+        'p_quantity': quantity,
+        'p_reason': reason,
+        'p_reference': reference,
+      },
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> suppliers(String hospitalId) async {
+    final rows = await _db
+        .from('hrms_suppliers')
+        .select()
+        .eq('hospital_id', hospitalId)
+        .order('name')
+        .limit(500);
+    return rows.map((row) => Map<String, dynamic>.from(row)).toList();
+  }
+
+  Future<void> createSupplier(
+    String hospitalId, {
+    required String name,
+    String? contactName,
+    String? email,
+    String? phone,
+    String? address,
+  }) async {
+    await _db.from('hrms_suppliers').insert({
+      'hospital_id': hospitalId,
+      'name': name.trim(),
+      'contact_name': contactName,
+      'email': email,
+      'phone': phone,
+      'address': address,
+      'created_by': _db.auth.currentUser!.id,
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> requisitions(String hospitalId) async {
+    final rows = await _db
+        .from('purchase_requisitions')
+        .select('*,departments(name),hrms_suppliers(name)')
+        .eq('hospital_id', hospitalId)
+        .order('created_at', ascending: false)
+        .limit(200);
+    return rows.map((row) => Map<String, dynamic>.from(row)).toList();
+  }
+
+  Future<void> createRequisition(
+    String hospitalId, {
+    String? departmentId,
+    String? supplierId,
+    required String title,
+    required String justification,
+    double? estimatedCost,
+    String? requiredBy,
+  }) async {
+    await _db.from('purchase_requisitions').insert({
+      'hospital_id': hospitalId,
+      'department_id': departmentId,
+      'supplier_id': supplierId,
+      'title': title.trim(),
+      'justification': justification.trim(),
+      'estimated_cost': estimatedCost,
+      'required_by': requiredBy,
+      'status': 'submitted',
+      'created_by': _db.auth.currentUser!.id,
+    });
+  }
+
+  Future<void> setRequisitionStatus(String id, String status) async {
+    await _db
+        .from('purchase_requisitions')
+        .update({'status': status})
+        .eq('id', id);
+  }
+
+  Future<List<Map<String, dynamic>>> assets(String hospitalId) async {
+    final rows = await _db
+        .from('medical_assets')
+        .select('*,departments(name)')
+        .eq('hospital_id', hospitalId)
+        .order('name')
+        .limit(500);
+    return rows.map((row) => Map<String, dynamic>.from(row)).toList();
+  }
+
+  Future<void> createAsset(
+    String hospitalId, {
+    String? departmentId,
+    required String tag,
+    required String name,
+    String? serial,
+    String? manufacturer,
+    String? model,
+    String? location,
+    String? warrantyUntil,
+    String? notes,
+  }) async {
+    await _db.from('medical_assets').insert({
+      'hospital_id': hospitalId,
+      'department_id': departmentId,
+      'asset_tag': tag.trim(),
+      'name': name.trim(),
+      'serial_number': serial,
+      'manufacturer': manufacturer,
+      'model': model,
+      'location': location,
+      'warranty_until': warrantyUntil,
+      'notes': notes,
+      'created_by': _db.auth.currentUser!.id,
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> maintenance(String hospitalId) async {
+    final rows = await _db
+        .from('maintenance_work_orders')
+        .select('*,medical_assets(name,asset_tag)')
+        .eq('hospital_id', hospitalId)
+        .order('created_at', ascending: false)
+        .limit(200);
+    return rows.map((row) => Map<String, dynamic>.from(row)).toList();
+  }
+
+  Future<void> createMaintenance(
+    String hospitalId, {
+    required String assetId,
+    required String title,
+    required String description,
+    required String priority,
+    String? scheduledFor,
+  }) async {
+    await _db.from('maintenance_work_orders').insert({
+      'hospital_id': hospitalId,
+      'asset_id': assetId,
+      'title': title.trim(),
+      'description': description.trim(),
+      'priority': priority,
+      'scheduled_for': scheduledFor,
+      'reported_by': _db.auth.currentUser!.id,
+    });
+  }
+
+  Future<void> setMaintenanceStatus(
+    String id,
+    String status, {
+    String? resolution,
+  }) async {
+    await _db
+        .from('maintenance_work_orders')
+        .update({'status': status, 'resolution': resolution})
+        .eq('id', id);
+  }
+
+  Future<List<Map<String, dynamic>>> hospitalUsers(String hospitalId) async {
+    final rows = await _db.rpc(
+      'hrms_list_hospital_users',
+      params: {'p_hospital_id': hospitalId},
+    );
+    return (rows as List)
+        .map((row) => Map<String, dynamic>.from(row as Map))
+        .toList();
+  }
+
+  Future<void> addHospitalUser(
+    String hospitalId, {
+    required String email,
+    required String role,
+    String? departmentId,
+  }) async {
+    await _db.rpc(
+      'hrms_add_member',
+      params: {
+        'p_hospital_id': hospitalId,
+        'p_email': email.trim(),
+        'p_role': role,
+        'p_department_id': departmentId,
+      },
+    );
+  }
+
+  Future<void> setMembershipActive(String id, bool active) async {
+    await _db.rpc(
+      'hrms_set_membership_active',
+      params: {'p_membership_id': id, 'p_is_active': active},
+    );
+  }
 }

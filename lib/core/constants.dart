@@ -14,6 +14,13 @@ class Routes {
   static const inventory = '/inventory';
   static const movements = '/stock-movements';
   static const facilities = '/facilities';
+  static const requests = '/requests';
+  static const transfers = '/transfers';
+  static const procurement = '/procurement';
+  static const equipment = '/equipment';
+  static const maintenance = '/maintenance';
+  static const hrmsReports = '/hospital-reports';
+  static const hospitalUsers = '/hospital-users';
   static const resources = '/resources';
   static const myUploads = '/my-uploads';
   static const upload = '/resources/new';

@@ -21,6 +21,7 @@ import 'screens/hrms/inventory_screen.dart';
 import 'screens/hrms/movements_screen.dart';
 import 'screens/hrms/facilities_screen.dart';
 import 'screens/hrms/dashboard_screen.dart';
+import 'screens/hrms/workflows_screen.dart';
 import 'shell.dart';
 
 GoRouter buildRouter(AppState state) {
@@ -59,6 +60,41 @@ GoRouter buildRouter(AppState state) {
           GoRoute(
             path: Routes.facilities,
             builder: (context, goState) => const FacilitiesScreen(),
+          ),
+          GoRoute(
+            path: Routes.requests,
+            builder: (context, state) =>
+                const HrmsWorkflowsScreen(module: HrmsModule.requests),
+          ),
+          GoRoute(
+            path: Routes.transfers,
+            builder: (context, state) =>
+                const HrmsWorkflowsScreen(module: HrmsModule.transfers),
+          ),
+          GoRoute(
+            path: Routes.procurement,
+            builder: (context, state) =>
+                const HrmsWorkflowsScreen(module: HrmsModule.procurement),
+          ),
+          GoRoute(
+            path: Routes.equipment,
+            builder: (context, state) =>
+                const HrmsWorkflowsScreen(module: HrmsModule.equipment),
+          ),
+          GoRoute(
+            path: Routes.maintenance,
+            builder: (context, state) =>
+                const HrmsWorkflowsScreen(module: HrmsModule.maintenance),
+          ),
+          GoRoute(
+            path: Routes.hrmsReports,
+            builder: (context, state) =>
+                const HrmsWorkflowsScreen(module: HrmsModule.reports),
+          ),
+          GoRoute(
+            path: Routes.hospitalUsers,
+            builder: (context, state) =>
+                const HrmsWorkflowsScreen(module: HrmsModule.users),
           ),
           GoRoute(
             path: Routes.resources,

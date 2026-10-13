@@ -39,6 +39,48 @@ class AppShell extends StatelessWidget {
       activeIcon: Icons.domain,
     ),
     (
+      route: Routes.requests,
+      label: 'Requests',
+      icon: Icons.assignment_outlined,
+      activeIcon: Icons.assignment,
+    ),
+    (
+      route: Routes.transfers,
+      label: 'Transfers',
+      icon: Icons.compare_arrows_outlined,
+      activeIcon: Icons.compare_arrows,
+    ),
+    (
+      route: Routes.procurement,
+      label: 'Procurement',
+      icon: Icons.shopping_cart_outlined,
+      activeIcon: Icons.shopping_cart,
+    ),
+    (
+      route: Routes.equipment,
+      label: 'Equipment',
+      icon: Icons.medical_services_outlined,
+      activeIcon: Icons.medical_services,
+    ),
+    (
+      route: Routes.maintenance,
+      label: 'Maintenance',
+      icon: Icons.build_outlined,
+      activeIcon: Icons.build,
+    ),
+    (
+      route: Routes.hrmsReports,
+      label: 'Reports',
+      icon: Icons.analytics_outlined,
+      activeIcon: Icons.analytics,
+    ),
+    (
+      route: Routes.hospitalUsers,
+      label: 'Users & Roles',
+      icon: Icons.manage_accounts_outlined,
+      activeIcon: Icons.manage_accounts,
+    ),
+    (
       route: Routes.notifications,
       label: 'Notifications',
       icon: Icons.notifications_outlined,

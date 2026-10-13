@@ -4,9 +4,9 @@ This repository is being transitioned from an electronic resource portal into a 
 
 ## Current implementation status
 
-The first HRMS database foundation is in [`supabase/migrations/001_hrms_inventory_foundation.sql`](supabase/migrations/001_hrms_inventory_foundation.sql). It adds tenant-scoped hospitals, departments, memberships, warehouses, inventory items, medicine batches, stock balances, and an append-only movement history. A PostgreSQL function applies stock movements atomically, checks membership and permissions, prevents negative stock, and blocks issue of expired or quarantined batches.
+The database foundation is in [`supabase/migrations/001_hrms_inventory_foundation.sql`](supabase/migrations/001_hrms_inventory_foundation.sql). It adds tenant-scoped hospitals, departments, memberships, warehouses, inventory items, medicine batches, stock balances, and movement history. [`002_hrms_workflows.sql`](supabase/migrations/002_hrms_workflows.sql) adds department requests and reviews, atomic stock transfers, suppliers and purchase requisitions, medical equipment and maintenance work orders, and hospital user/role administration.
 
-The Flutter app now has hospital-scoped inventory browsing, item creation, medicine batch registration, stock receipt/issue/adjustment/return/wastage entry with movement history, and hospital administrator screens for departments and warehouses. Its role-based dashboard shows hospital-specific stock, low-stock alerts, medicine expiry counts, recent movements, and shortcuts based on active membership roles. Data-entry forms use grouped sections, responsive field grids, input validation, and date pickers. Public self-registration has been removed from the sign-in flow; hospital access must be provisioned by an administrator. The original e-resource screens remain in the source but are no longer part of the main navigation. Procurement, department requests/approvals, equipment maintenance, membership administration, operational reports, durable notifications, and offline synchronization still need implementation. Do not treat this repository as a production-ready hospital inventory system.
+The Flutter app has hospital-scoped inventory, stock movement, facilities, requests and approvals, transfers, procurement, equipment and maintenance, hospital user management, and operational inventory reports in the sidebar. Forms and actions are shown according to the signed-in user's active hospital roles, while RLS and database functions enforce access on the server. The dashboard shows hospital-specific stock, low-stock alerts, medicine expiry counts, recent movements, and role-based shortcuts. Public self-registration has been removed from the sign-in flow; membership assignment is for hospital administrators and only works for an existing account email. Notifications and offline synchronization are not implemented. Do not treat this repository as a production-ready hospital inventory system.
 
 ## Stack
 
@@ -18,7 +18,7 @@ The Flutter app now has hospital-scoped inventory browsing, item creation, medic
 ## Database setup
 
 1. Create a Supabase project and configure authentication.
-2. Apply the existing profile/auth schema required by the current app, then apply migrations in order from `supabase/migrations/` using the Supabase CLI or SQL editor.
+2. Apply the existing profile/auth schema required by the current app, then apply `001_hrms_inventory_foundation.sql` followed by `002_hrms_workflows.sql` using the Supabase CLI or SQL editor.
 3. Provision the initial hospital, department, warehouse, and administrator membership through a trusted administrative process. Membership changes are intentionally not exposed to ordinary client users.
 4. Keep the Supabase service-role key and database credentials out of Flutter and Web builds. Configure only the project URL and publishable/anon key in the local environment.
 5. Review and test all RLS policies in a non-production project before adding real operational data.
@@ -35,13 +35,6 @@ flutter run -d android
 
 Configure the Supabase project URL and publishable client key using the environment mechanism in `lib/core/env.dart`. Never include a service-role key in the client.
 
-## Planned delivery sequence
+## Scope notes
 
-1. Hospital onboarding, memberships, roles, and location administration.
-2. Inventory screens and validated receiving, issue, transfer, count, and adjustment workflows.
-3. Medicine FEFO, expiry, recall, quarantine, and disposal workflows.
-4. Department requests, approvals, suppliers, requisitions, purchase orders, and goods receipts.
-5. Equipment registry, maintenance, alerts, reports, audit views, and notifications.
-6. Offline behavior, accessibility, security/concurrency coverage, and production operations.
-
-Each module needs matching Flutter screens and services, database authorization, validation and error states, audit behavior, and automated coverage before it should be considered complete.
+The current workflows provide request review, supplier and requisition tracking, asset registration, maintenance status tracking, stock transfers, and summary reporting. They do not yet provide full purchase orders/goods receiving, clinical patient records, alerts/notifications, offline mode, or a complete audit/report export. Review and exercise all RLS policies in a non-production project before using real hospital data.
