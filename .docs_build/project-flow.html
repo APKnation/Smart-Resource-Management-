@@ -1,0 +1,756 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hospital Resource Management System — Complete Project Flow</title>
+<style>
+@page { size: A4; margin: 18mm 15mm 20mm 15mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 9.6pt; line-height: 1.55; color: #1f2430; margin: 0;
+}
+h1, h2, h3, h4 { color: #12324f; margin: 0 0 6px 0; line-height: 1.25; }
+h1 { font-size: 20pt; }
+h2 { font-size: 14pt; margin-top: 26px; border-bottom: 2.5px solid #1d6fa5; padding-bottom: 4px; }
+h3 { font-size: 11.2pt; margin-top: 18px; color: #1a4e77; }
+h4 { font-size: 9.8pt; margin-top: 12px; color: #2c5776; text-transform: uppercase; letter-spacing: .4px; }
+p { margin: 6px 0; }
+ul, ol { margin: 6px 0 10px 0; padding-left: 20px; }
+li { margin: 2.5px 0; }
+code {
+  font-family: "DejaVu Sans Mono", Consolas, monospace;
+  font-size: 8.6pt; background: #eef3f7; padding: 1px 4px; border-radius: 3px; color: #14405e;
+}
+.mono { font-family: "DejaVu Sans Mono", Consolas, monospace; font-size: 8.3pt; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0 14px 0; font-size: 8.7pt; }
+th { background: #12324f; color: #fff; text-align: left; padding: 5px 7px; font-weight: 600; }
+td { border: 1px solid #cfd9e2; padding: 4px 7px; vertical-align: top; }
+tr:nth-child(even) td { background: #f6f9fb; }
+.yes { color: #1a7a3c; font-weight: 700; }
+.no { color: #b0b7be; }
+.deny { color: #b3261e; font-weight: 700; }
+.cover { text-align: center; padding: 40px 0 0 0; }
+.cover .sub { font-size: 12.5pt; color: #45606f; margin-top: 4px; }
+.badge {
+  display: inline-block; background: #1d6fa5; color: #fff; font-size: 8pt;
+  padding: 3px 10px; border-radius: 12px; margin: 3px 2px; letter-spacing: .3px;
+}
+.badge.g { background: #1a7a3c; } .badge.o { background: #b26a00; } .badge.r { background: #b3261e; }
+.badge.s { background: #5b6b7b; }
+.card {
+  border: 1px solid #cfd9e2; border-left: 4px solid #1d6fa5; background: #f8fbfd;
+  padding: 9px 12px; margin: 10px 0; border-radius: 3px;
+}
+.card.warn { border-left-color: #b26a00; background: #fdf9f2; }
+.card.danger { border-left-color: #b3261e; background: #fdf6f5; }
+.card.ok { border-left-color: #1a7a3c; background: #f5fbf7; }
+.card h4 { margin-top: 0; }
+.note { font-size: 8.4pt; color: #5b6b7b; font-style: italic; }
+.pb { page-break-before: always; }
+.avoid { page-break-inside: avoid; }
+
+/* flow diagram */
+.flow { margin: 12px 0; }
+.step {
+  border: 1.4px solid #1d6fa5; background: #eef6fb; border-radius: 5px;
+  padding: 7px 11px; margin: 0 auto; max-width: 640px; position: relative;
+}
+.step b { color: #12324f; }
+.step .t { font-size: 9.2pt; font-weight: 700; color: #1a4e77; display: block; margin-bottom: 2px; }
+.step .d { font-size: 8.6pt; color: #37505f; }
+.step.db { border-color: #1a7a3c; background: #f0f8f2; }
+.step.db .t { color: #14612f; }
+.step.ui { border-color: #7b3fa0; background: #f7f3fb; }
+.step.ui .t { color: #5f2f7d; }
+.step.guard { border-color: #b26a00; background: #fdf7ee; }
+.step.guard .t { color: #8a5200; }
+.arrow { text-align: center; color: #1d6fa5; font-size: 12pt; line-height: 1; margin: 4px 0; }
+.arrow small { display: block; font-size: 7.6pt; color: #6b7a88; font-style: italic; }
+
+/* branch diagram */
+.branch { display: table; width: 100%; border-collapse: separate; margin: 8px 0 12px 0; }
+.branch .col { display: table-cell; width: 25%; padding: 0 4px; vertical-align: top; }
+.node {
+  border: 1.2px solid #9db4c4; border-radius: 4px; background: #fff;
+  padding: 5px 7px; margin-bottom: 5px; font-size: 8.2pt; text-align: center;
+}
+.node.h { background: #12324f; color: #fff; border-color: #12324f; font-weight: 700; font-size: 8.4pt; }
+.node.g { border-color: #1a7a3c; background: #f0f8f2; }
+.node.o { border-color: #b26a00; background: #fdf7ee; }
+.node.p { border-color: #7b3fa0; background: #f7f3fb; }
+.toc { columns: 2; column-gap: 26px; font-size: 9.2pt; }
+.toc div { padding: 2px 0; border-bottom: 1px dotted #d7dee4; }
+.toc .n { color: #1d6fa5; font-weight: 700; display: inline-block; width: 22px; }
+footer { margin-top: 26px; padding-top: 8px; border-top: 1px solid #cfd9e2; font-size: 8pt; color: #6b7a88; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Hospital Resource Management System</h1>
+  <div class="sub">Complete Project Flow — Architecture, Modules, Data &amp; Security</div>
+  <div style="margin-top:16px">
+    <span class="badge">Flutter 3.x · Dart 3.13</span>
+    <span class="badge">Web + Android</span>
+    <span class="badge g">Supabase · PostgreSQL · Auth · Storage · Realtime</span>
+    <span class="badge o">Row Level Security multi-tenancy</span>
+    <span class="badge s">go_router</span>
+    <span class="badge s">ChangeNotifier state</span>
+  </div>
+  <div style="margin-top:18px; font-size:8.8pt; color:#5b6b7b">
+    Repository: <span class="mono">e_resource</span> &nbsp;·&nbsp; version 1.0.0+1 &nbsp;·&nbsp; 37 Dart source files (~5,800 LOC) &nbsp;·&nbsp; 2 HRMS migrations + legacy schema<br>
+    Generated by static inspection of <span class="mono">lib/</span> and <span class="mono">supabase/</span>
+  </div>
+</div>
+
+<h2>Table of Contents</h2>
+<div class="toc">
+  <div><span class="n">1</span>What this project is (two systems in one repo)</div>
+  <div><span class="n">2</span>Layered architecture</div>
+  <div><span class="n">3</span>Startup flow — boot to first screen</div>
+  <div><span class="n">4</span>Authentication &amp; session flow</div>
+  <div><span class="n">5</span>Navigation shell &amp; route map</div>
+  <div><span class="n">6</span>Tenancy + RBAC model (the security spine)</div>
+  <div><span class="n">7</span>The per-screen HRMS data-fetch pattern</div>
+  <div><span class="n">8</span>Module flow: Dashboard</div>
+  <div><span class="n">9</span>Module flow: Inventory (items &amp; batches)</div>
+  <div><span class="n">10</span>Module flow: Stock movements (<span class="mono">record_stock_movement</span>)</div>
+  <div><span class="n">11</span>Module flow: Facilities (departments &amp; warehouses)</div>
+  <div><span class="n">12</span>Module flow: Department requests &amp; review</div>
+  <div><span class="n">13</span>Module flow: Stock transfers (<span class="mono">hrms_transfer_stock</span>)</div>
+  <div><span class="n">14</span>Module flow: Procurement (suppliers &amp; requisitions)</div>
+  <div><span class="n">15</span>Module flow: Equipment &amp; maintenance</div>
+  <div><span class="n">16</span>Module flow: Users &amp; roles administration</div>
+  <div><span class="n">17</span>Module flow: Reports</div>
+  <div><span class="n">18</span>Role → capability matrix</div>
+  <div><span class="n">19</span>Database schema / entity flow</div>
+  <div><span class="n">20</span>Legacy e-resources subsystem flow</div>
+  <div><span class="n">21</span>Realtime, notifications &amp; favorites</div>
+  <div><span class="n">22</span>End-to-end operational lifecycle</div>
+  <div><span class="n">23</span>Gaps, mismatches &amp; dead code</div>
+  <div><span class="n">24</span>Source file map</div>
+</div>
+
+<h2 class="pb">1 · What this project is</h2>
+<p>The repository is mid-transition from an <b>E-Resources Management System</b> (document/file sharing portal — package name is still <code>e_resource</code>) into a <b>Hospital Resource Management System (HRMS)</b> — a multi-tenant, role-gated inventory, procurement and asset platform. Both subsystems coexist in one app.</p>
+
+<div class="branch">
+  <div class="col">
+    <div class="node h">LEGACY · E-Resources</div>
+    <div class="node p">Resources + versions</div>
+    <div class="node p">Categories, favorites</div>
+    <div class="node p">Upload → approve workflow</div>
+    <div class="node p">Access logs, audit trail</div>
+    <div class="node p">Notifications, settings</div>
+  </div>
+  <div class="col">
+    <div class="node h">CURRENT · HRMS</div>
+    <div class="node g">Hospitals / memberships</div>
+    <div class="node g">Departments, warehouses</div>
+    <div class="node g">Items, batches, balances</div>
+    <div class="node g">Stock movements, transfers</div>
+    <div class="node g">Requests, procurement</div>
+    <div class="node g">Assets, maintenance</div>
+  </div>
+  <div class="col">
+    <div class="node h">SHARED FOUNDATION</div>
+    <div class="node">Supabase Auth</div>
+    <div class="node">profiles table</div>
+    <div class="node">AppState (ChangeNotifier)</div>
+    <div class="node">go_router + AppShell</div>
+  </div>
+  <div class="col">
+    <div class="node h">DELIBERATELY ABSENT</div>
+    <div class="node o">Notifications for HRMS events</div>
+    <div class="node o">Offline sync</div>
+    <div class="node o">Purchase orders / GRN</div>
+    <div class="node o">Patient / clinical records</div>
+    <div class="node o">Report export</div>
+  </div>
+</div>
+
+<div class="card danger">
+  <h4>Read the README warning</h4>
+  <p style="margin:0">The project explicitly states it is <b>not production-ready</b>. It is a working prototype whose security boundary is real (Postgres RLS + <span class="mono">SECURITY DEFINER</span> functions), but whose operational coverage is partial.</p>
+</div>
+
+<h2>2 · Layered architecture</h2>
+<table>
+  <tr><th style="width:16%">Layer</th><th style="width:30%">Files</th><th>Responsibility</th></tr>
+  <tr><td><b>Bootstrap</b></td><td><span class="mono">lib/main.dart</span>, <span class="mono">lib/core/env.dart</span></td><td>Load <span class="mono">.env</span>, initialize Supabase, build AppState, choose between real app and setup screen.</td></tr>
+  <tr><td><b>State</b></td><td><span class="mono">lib/app_state.dart</span></td><td>Single <span class="mono">ChangeNotifier</span> holding profile, favorites, settings, unread count; exposes role booleans; owns auth stream + realtime channel. Injected via <span class="mono">AppStateScope</span> InheritedNotifier.</td></tr>
+  <tr><td><b>Routing</b></td><td><span class="mono">lib/router.dart</span>, <span class="mono">lib/shell.dart</span></td><td>GoRouter with a global auth redirect keyed on <span class="mono">refreshListenable: state</span>; ShellRoute wraps all inner pages in <span class="mono">AppShell</span>.</td></tr>
+  <tr><td><b>Screens</b></td><td><span class="mono">lib/screens/**</span></td><td>Stateful widgets. Each HRMS screen owns its own <span class="mono">HrmsService</span>, hospital selection and <span class="mono">Future</span> state — no shared view-model.</td></tr>
+  <tr><td><b>Services</b></td><td><span class="mono">lib/services/**</span></td><td>Thin typed wrappers over Supabase table access + <span class="mono">rpc()</span> calls. No business rules in Dart — rules live in Postgres.</td></tr>
+  <tr><td><b>Backend</b></td><td><span class="mono">supabase/schema.sql</span>, <span class="mono">migrations/001–002</span></td><td>Tables, enums, RLS policies, <span class="mono">SECURITY DEFINER</span> functions, triggers (versioning, notifications, audit, <span class="mono">updated_at</span>).</td></tr>
+</table>
+
+<div class="card ok">
+  <h4>Key architectural decision</h4>
+  <p style="margin:0"><b>Authorization is enforced server-side, not in Dart.</b> Stock balances and movement rows have <span class="mono">REVOKE INSERT, UPDATE, DELETE</span> from <span class="mono">authenticated</span>; they can only change through <span class="mono">record_stock_movement()</span> and <span class="mono">hrms_transfer_stock()</span>. The client's role checks exist only to show/hide UI — the database is the authority.</p>
+</div>
+
+<h2>3 · Startup flow — boot to first screen</h2>
+<div class="flow">
+  <div class="step"><span class="t">1 · main()</span><span class="d"><span class="mono">WidgetsFlutterBinding.ensureInitialized()</span>; installs a <span class="mono">FlutterError.onError</span> logger so a startup crash never leaves a blank page.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step"><span class="t">2 · dotenv.load('.env')</span><span class="d">Reads <span class="mono">SUPABASE_URL</span> and <span class="mono">SUPABASE_ANON_KEY</span>. <span class="mono">.env</span> is declared as a Flutter asset in <span class="mono">pubspec.yaml</span> — a full restart is required after editing it, hot reload will not pick it up. Failure is caught, not fatal.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">3 · Env.isConfigured ?</span><span class="d">Guard: URL non-empty, anon key non-empty, URL starts with <span class="mono">http</span>.</span></div>
+  <div class="arrow">↓<small>true</small></div>
+  <div class="step db"><span class="t">4 · Supabase.initialize(url, publishableKey)</span><span class="d">On success <span class="mono">backendReady = true</span>. Only the anon/publishable key is ever shipped — the service-role key must stay out of client builds.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step"><span class="t">5 · AppState().init()</span><span class="d">Subscribes to <span class="mono">auth.onAuthStateChange</span>. Restores any persisted Supabase session, which fires <span class="mono">initialSession</span> → loads profile, favorites, settings, unread count and opens the realtime channel.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">6a · backendReady → MaterialApp.router</span><span class="d">Light + dark themes, <span class="mono">routerConfig: buildRouter(state)</span>, initial location <span class="mono">/</span>.</span></div>
+  <div class="step ui" style="margin-top:8px"><span class="t">6b · otherwise → SetupRequiredScreen</span><span class="d">Plain <span class="mono">MaterialApp</span> showing the exact <span class="mono">.env</span> contents to create plus the instruction to run <span class="mono">supabase/schema.sql</span> once.</span></div>
+</div>
+
+<h2 class="pb">4 · Authentication &amp; session flow</h2>
+<h3>4.1 Sign-in</h3>
+<div class="flow">
+  <div class="step ui"><span class="t">LoginScreen</span><span class="d">Email + password form. Note: there is no register link — self-signup was deliberately removed from the sign-in screen (the router never registers <span class="mono">/register</span>).</span></div>
+  <div class="arrow">↓ <small>state.signIn(email, password)</small></div>
+  <div class="step db"><span class="t">AuthService.signIn → auth.signInWithPassword</span><span class="d">Supabase Auth issues a session (persisted by the SDK).</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">ensureProfile()</span><span class="d">SELECT from <span class="mono">profiles</span> where <span class="mono">id = auth.uid()</span>; if missing, INSERT a row with email + <span class="mono">full_name</span> from user metadata. This is the "signup safety net" for accounts created before the DB trigger ran.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">profile.isActive?</span><span class="d">If <span class="mono">false</span> → <span class="mono">signOut()</span> then throw <span class="mono">AuthException('This account has been deactivated…')</span>.</span></div>
+  <div class="arrow">↓ <small>active</small></div>
+  <div class="step"><span class="t">Hydrate AppState</span><span class="d">In sequence: <span class="mono">refreshProfile()</span> → <span class="mono">refreshFavorites()</span> → <span class="mono">refreshSettings()</span> → <span class="mono">refreshUnread()</span> → <span class="mono">_subscribeRealtime()</span> → <span class="mono">notifyListeners()</span>.</span></div>
+  <div class="arrow">↓ <small>GoRouter.refreshListenable fires the redirect</small></div>
+  <div class="step ui"><span class="t">Redirect → / (HRMS Dashboard)</span></div>
+</div>
+
+<div class="card warn">
+  <h4>Second deactivation gate</h4>
+  <p style="margin:0"><span class="mono">AppState.refreshProfile()</span> <em>also</em> checks <span class="mono">profile.isActive</span> and force-signs-out. So an account deactivated mid-session is dropped the next time the profile is refreshed via an auth event — but not by a plain screen reload.</p>
+</div>
+
+<h3>4.2 Registration (legacy path, still present in code, not reachable from UI)</h3>
+<div class="flow">
+  <div class="step ui"><span class="t">register_screen.dart</span><span class="d">email, password, full name, department, institution.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">auth.signUp(data: {full_name, department, institution})</span><span class="d">Creates <span class="mono">auth.users</span> row.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">Trigger on_auth_user_created → handle_new_user()</span><span class="d">Inserts the <span class="mono">profiles</span> row automatically (role defaults to <span class="mono">user</span>).</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">ensureProfile()</span><span class="d">Fallback manual insert if the trigger has not yet committed.</span></div>
+</div>
+<p class="note">A newly registered account has <b>no HRMS membership</b>. Every HRMS screen will therefore render "No active hospital membership is assigned to this account." until an administrator grants one (§16). This is the intended onboarding gate.</p>
+
+<h3>4.3 Sign-out</h3>
+<p><span class="mono">AppState.signOut()</span> → <span class="mono">auth.signOut()</span>, then clears <span class="mono">profile</span>, <span class="mono">_favoriteIds</span>, <span class="mono">_unread</span>, unsubscribes the realtime channel. The auth stream emits <span class="mono">signedOut</span>, the redirect sends the user to <span class="mono">/login</span>, and the drawer calls <span class="mono">context.go(Routes.login)</span>.</p>
+
+<h2>5 · Navigation shell &amp; route map</h2>
+<table>
+  <tr><th style="width:20%">Section</th><th style="width:26%">Route</th><th style="width:34%">Screen</th><th>Status</th></tr>
+  <tr><td rowspan="13"><b>HRMS rail<br>(visible nav)</b></td><td><span class="mono">/</span></td><td>HrmsDashboardScreen</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/inventory</span></td><td>InventoryScreen</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/stock-movements</span></td><td>MovementsScreen</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/facilities</span></td><td>FacilitiesScreen</td><td class="yes">Live (hidden from bottom bar)</td></tr>
+  <tr><td><span class="mono">/requests</span></td><td>HrmsWorkflowsScreen(requests)</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/transfers</span></td><td>HrmsWorkflowsScreen(transfers)</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/procurement</span></td><td>HrmsWorkflowsScreen(procurement)</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/equipment</span></td><td>HrmsWorkflowsScreen(equipment)</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/maintenance</span></td><td>HrmsWorkflowsScreen(maintenance)</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/hospital-reports</span></td><td>HrmsWorkflowsScreen(reports)</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/hospital-users</span></td><td>HrmsWorkflowsScreen(users)</td><td class="yes">Live</td></tr>
+  <tr><td><span class="mono">/notifications</span></td><td>NotificationsScreen</td><td class="yes">Live (legacy)</td></tr>
+  <tr><td><span class="mono">/profile</span></td><td>ProfileScreen</td><td class="yes">Live (legacy)</td></tr>
+  <tr><td rowspan="6"><b>Orphaned<br>(URL only)</b></td><td><span class="mono">/login</span></td><td>LoginScreen</td><td>Outside shell (no nav)</td></tr>
+  <tr><td><span class="mono">/resources</span>, <span class="mono">/resources/:id</span>, <span class="mono">/resources/:id/edit</span></td><td>Resources / ResourceDetail / ResourceForm</td><td class="no">Routed, not in nav</td></tr>
+  <tr><td><span class="mono">/my-uploads</span> · <span class="mono">/resources/new</span></td><td>MyUploads · ResourceForm</td><td class="no">Routed, not in nav</td></tr>
+  <tr><td><span class="mono">/favorites</span></td><td>FavoritesScreen</td><td class="no">Routed, not in nav</td></tr>
+  <tr><td><span class="mono">/admin/approvals</span> · <span class="mono">/admin/categories</span> · <span class="mono">/admin/users</span> · <span class="mono">/admin/roles</span> · <span class="mono">/admin/reports</span> · <span class="mono">/admin/audit</span> · <span class="mono">/admin/settings</span></td><td>7 admin screens</td><td class="no">Routed, not in nav</td></tr>
+  <tr><td><span class="mono">/register</span></td><td>RegisterScreen</td><td class="deny">Constant exists, NO route</td></tr>
+</table>
+
+<h3>5.1 Responsive shell logic</h3>
+<div class="flow">
+  <div class="step ui"><span class="t">AppShell.build</span><span class="d">Reads current location from <span class="mono">GoRouterState.of(context)</span> and <span class="mono">MediaQuery.sizeOf(context).width</span>.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">width ≥ 900 ?</span></div>
+</div>
+<div class="branch">
+  <div class="col" style="width:50%">
+    <div class="node g">YES → NavigationRail<br><span class="mono">extended</span> when ≥ 1200px</div>
+    <div class="node g">Avatar with <span class="mono">initialsOf(name)</span> + role label at the rail head</div>
+    <div class="node g">13 destinations, notifications badge = unread count</div>
+    <div class="node g"><span class="mono">context.go(destinations[i].route)</span></div>
+  </div>
+  <div class="col" style="width:50%">
+    <div class="node o">NO → Scaffold + AppBar + Drawer + bottom NavigationBar</div>
+    <div class="node o">AppBar title from <span class="mono">_titleFor(loc)</span></div>
+    <div class="node o">Bottom bar = same destinations minus <span class="mono">/facilities</span></div>
+    <div class="node o">Drawer adds the <b>Sign out</b> action (only place it appears)</div>
+  </div>
+</div>
+<p class="note">Both branches are wrapped by <span class="mono">return AppStateScope(state: state, child: body)</span>, so any descendant can call <span class="mono">AppStateScope.of(context)</span>.</p>
+
+<h2 class="pb">6 · Tenancy + RBAC — the security spine</h2>
+<p>Every HRMS table carries a <span class="mono">hospital_id</span>. A user's access to a hospital is a row in <span class="mono">hrms_memberships</span> — and a user may hold <b>several memberships</b> (different hospitals, different roles, optionally scoped to a department) at once.</p>
+
+<h3>6.1 The single gatekeeper function</h3>
+<div class="card">
+<span class="mono">hrms_has_membership(p_hospital_id uuid, p_roles hrms_membership_role[] DEFAULT NULL) → boolean</span><br>
+<span class="mono">LANGUAGE sql STABLE SECURITY DEFINER · SET search_path = public, pg_temp</span>
+<pre style="font-size:8pt; margin:8px 0; white-space:pre-wrap">exists (select 1 from hrms_memberships m
+  where m.user_id = auth.uid() and m.hospital_id = p_hospital_id
+    and m.is_active and (p_roles is null or m.role = any(p_roles)))</pre>
+<p style="margin:0" class="note">Runs as the function owner, so a user can test membership without SELECT rights on the membership table itself. <span class="mono">REVOKE ALL FROM public</span> + <span class="mono">GRANT EXECUTE TO authenticated</span> — anon cannot call it. The <span class="mono">search_path</span> pinning blocks search-path hijacking.</p>
+</div>
+
+<h3>6.2 The ten membership roles</h3>
+<table>
+  <tr><th style="width:22%">Role</th><th>Domain of authority</th></tr>
+  <tr><td><span class="mono">hospital_admin</span></td><td>Everything inside one hospital: facilities, items, stock, reviews, transfers, procurement, assets, membership grants.</td></tr>
+  <tr><td><span class="mono">inventory_manager</span></td><td>Item &amp; batch catalog, all movement kinds, transfers, request review.</td></tr>
+  <tr><td><span class="mono">storekeeper</span></td><td>Issue / return / transfer legs, request review; <b>cannot</b> receipt, adjust or write off stock.</td></tr>
+  <tr><td><span class="mono">pharmacist</span></td><td>Medicine catalog + batches, receipt / issue / adjustment / wastage, request review.</td></tr>
+  <tr><td><span class="mono">procurement_officer</span></td><td>Suppliers, requisition lifecycle, request review.</td></tr>
+  <tr><td><span class="mono">department_head</span></td><td>Submit &amp; review department requests; requisitions.</td></tr>
+  <tr><td><span class="mono">healthcare_worker</span></td><td>Submit requests, report maintenance (read-only elsewhere).</td></tr>
+  <tr><td><span class="mono">biomedical_engineer</span></td><td>Medical assets and maintenance work orders.</td></tr>
+  <tr><td><span class="mono">finance_officer</span></td><td>Requisition status changes; dashboard in a cost-oriented view.</td></tr>
+  <tr><td><span class="mono">auditor</span></td><td>Read-only oversight; dashboard framed as "Audit activity".</td></tr>
+</table>
+
+<h3>6.3 Defence in depth — three independent layers</h3>
+<div class="flow">
+  <div class="step ui"><span class="t">Layer 1 · Dart UI gating</span><span class="d">Screens compute <span class="mono">_roles</span> from the selected hospital and hide buttons — e.g. <span class="mono">_canCreate</span> in <span class="mono">workflows_screen.dart:116</span>, <span class="mono">_canManageInventory</span>/<span class="mono">_canMoveStock</span> in the dashboard.</span></div>
+  <div class="arrow">↓ <small>bypassing this gains nothing</small></div>
+  <div class="step db"><span class="t">Layer 2 · PostgreSQL privileges</span><span class="d"><span class="mono">REVOKE INSERT, UPDATE, DELETE ON stock_balances, stock_movements FROM anon, authenticated</span>; <span class="mono">stock_transfers</span> is grant-limited to <span class="mono">SELECT, INSERT</span> only. Direct tampering is a permission error, not a policy check.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">Layer 3 · RLS policies per table</span><span class="d">Every table has <span class="mono">ENABLE ROW LEVEL SECURITY</span> plus a <span class="mono">"… read …"</span> policy using <span class="mono">hrms_has_membership(hospital_id)</span> and a write policy restricted to an explicit role array — with both <span class="mono">USING</span> and <span class="mono">WITH CHECK</span>, so a row cannot be re-parented into another hospital.</span></div>
+</div>
+
+<h3>6.4 Write-path summary</h3>
+<table>
+  <tr><th style="width:26%">Table</th><th style="width:32%">Read</th><th>Write</th></tr>
+  <tr><td><span class="mono">hospitals</span></td><td>Any active member</td><td class="deny">No policy at all → read-only for all clients</td></tr>
+  <tr><td><span class="mono">departments</span> · <span class="mono">warehouses</span></td><td>Any member</td><td><span class="mono">hospital_admin</span> only (<span class="mono">FOR ALL</span>)</td></tr>
+  <tr><td><span class="mono">hrms_memberships</span></td><td>Own rows, or <span class="mono">hospital_admin</span></td><td>Via <span class="mono">SECURITY DEFINER</span> RPCs only</td></tr>
+  <tr><td><span class="mono">inventory_items</span> · <span class="mono">inventory_batches</span></td><td>Any member</td><td><span class="mono">hospital_admin</span>, <span class="mono">inventory_manager</span>, <span class="mono">pharmacist</span></td></tr>
+  <tr><td><span class="mono">stock_balances</span></td><td>Any member</td><td class="deny">Function-only (privileges revoked)</td></tr>
+  <tr><td><span class="mono">stock_movements</span></td><td>Any member</td><td class="deny">Function-only (privileges revoked)</td></tr>
+  <tr><td><span class="mono">resource_requests</span></td><td>Any member</td><td>INSERT: self only (<span class="mono">requested_by = auth.uid()</span>); UPDATE: admin / inventory_manager / department_head / storekeeper / pharmacist</td></tr>
+  <tr><td><span class="mono">resource_request_lines</span></td><td>Any member</td><td>INSERT: only into <b>your own pending</b> request; UPDATE: reviewers</td></tr>
+  <tr><td><span class="mono">stock_transfers</span></td><td>Any member</td><td>INSERT: admin / inventory_manager / storekeeper, <span class="mono">actor_id = auth.uid()</span>; <b>no UPDATE or DELETE</b></td></tr>
+  <tr><td><span class="mono">hrms_suppliers</span></td><td>Any member</td><td><span class="mono">FOR ALL</span>: admin, procurement_officer</td></tr>
+  <tr><td><span class="mono">purchase_requisitions</span></td><td>Any member</td><td>INSERT: self; UPDATE: admin, procurement_officer, finance_officer</td></tr>
+  <tr><td><span class="mono">medical_assets</span></td><td>Any member</td><td><span class="mono">FOR ALL</span>: admin, biomedical_engineer</td></tr>
+  <tr><td><span class="mono">maintenance_work_orders</span></td><td>Any member</td><td>INSERT: self; UPDATE: admin, biomedical_engineer</td></tr>
+</table>
+
+<h2 class="pb">7 · The per-screen HRMS data-fetch pattern</h2>
+<p>All six HRMS screens repeat the same shape. Understanding it once explains the whole module set.</p>
+<div class="flow">
+  <div class="step"><span class="t">initState()</span><span class="d">Instantiate a private <span class="mono">HrmsService</span>; set <span class="mono">_hospitals = _service.hospitals()</span> as a <span class="mono">late Future</span>.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">FutureBuilder&lt;List&lt;HrmsHospital&gt;&gt;</span><span class="d">States: error → error panel (+ Retry); no data → spinner; empty list → "No active hospital membership is assigned to this account."</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">_hospitalId == null ?</span><span class="d">Auto-select inside <span class="mono">WidgetsBinding.instance.addPostFrameCallback</span> → <span class="mono">_select(hospitals.first)</span>. Selecting during build is illegal in Flutter, hence the post-frame deferral.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step"><span class="t">_select(hospital)</span><span class="d">Sets <span class="mono">_hospitalId</span>, caches <span class="mono">_roles = hospital.roles</span> (drives every button), and starts <span class="mono">_rows = _load(hospitalId)</span> — which first fetches the picker dependencies (departments / warehouses / items / suppliers / assets), then the module list.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">Hospital dropdown + list + action buttons</span><span class="d">Switching hospital re-runs <span class="mono">_select</span>. After a mutation, screens call <span class="mono">setState(() =&gt; _rows = _load(_hospitalId!))</span> — a full re-query, not an optimistic patch.</span></div>
+</div>
+
+<h3>7.1 Service call shape</h3>
+<p><span class="mono">HrmsService</span> uses only two Supabase verbs: query-builder chains (<span class="mono">.from(t).select(cols).eq('hospital_id', id).order().limit(n)</span>) and <span class="mono">.rpc(fn, params: {p_…})</span> for the privileged operations. Every list read carries an explicit <span class="mono">hospital_id</span> filter <em>and</em> a hard <span class="mono">limit</span> (100 / 200 / 500) — pagination is not implemented.</p>
+
+<div class="card warn">
+  <h4>Consequence of the per-screen pattern</h4>
+  <p style="margin:0">The selected hospital lives in each screen's private state and is <b>not persisted or shared</b>. Navigating from Inventory to Transfers re-fetches the hospital list and silently resets to <span class="mono">hospitals.first</span>. A user with three hospitals must re-pick the tenant on every page. There is no <span class="mono">AppState.currentHospitalId</span>.</p>
+</div>
+
+<h2>8 · Module flow: Dashboard</h2>
+<p><span class="mono">HrmsService.dashboard(hospitalId)</span> runs four queries concurrently via <span class="mono">Future.wait</span>:</p>
+<table>
+  <tr><th style="width:8%">#</th><th style="width:34%">Query</th><th>Becomes</th></tr>
+  <tr><td>1</td><td><span class="mono">inventory(hospitalId)</span></td><td>All items + aggregated quantities → KPI + <span class="mono">lowStockItems</span> + <span class="mono">stockedItemsCount</span></td></tr>
+  <tr><td>2</td><td><span class="mono">movements(hospitalId)</span></td><td>Recent 100 stock movements</td></tr>
+  <tr><td>3</td><td><span class="mono">inventory_batches</span> where <span class="mono">expires_on</span> between today and today+30d, not quarantined</td><td><span class="mono">expiringBatchCount</span></td></tr>
+  <tr><td>4</td><td><span class="mono">inventory_batches</span> where <span class="mono">expires_on &lt; today</span>, not quarantined</td><td><span class="mono">expiredBatchCount</span></td></tr>
+</table>
+<p>The dashboard then renders a <b>role-adaptive panel</b>: the same data, different framing and shortcuts.</p>
+<table>
+  <tr><th style="width:34%">Roles held</th><th>Effect</th></tr>
+  <tr><td><span class="mono">hospital_admin</span></td><td>Administration shortcuts; full KPI set</td></tr>
+  <tr><td><span class="mono">pharmacist</span> / <span class="mono">inventory_manager</span> / <span class="mono">hospital_admin</span></td><td>Expiry and batch panels surfaced</td></tr>
+  <tr><td><span class="mono">procurement_officer</span></td><td>Low-stock heading re-labelled as a reorder prompt; procurement shortcut</td></tr>
+  <tr><td><span class="mono">auditor</span> / <span class="mono">finance_officer</span></td><td>Activity feed labelled "Audit activity"; oversight shortcut</td></tr>
+  <tr><td><span class="mono">department_head</span> / <span class="mono">healthcare_worker</span></td><td>Request-submission shortcut</td></tr>
+  <tr><td><span class="mono">biomedical_engineer</span></td><td>Equipment / maintenance shortcut</td></tr>
+  <tr><td>none of the above</td><td>Neutral summary text only</td></tr>
+</table>
+<p class="note">Guards used: <span class="mono">_canManageInventory</span> (admin / inventory_manager / pharmacist) and <span class="mono">_canMoveStock</span> (adds storekeeper).</p>
+
+<h2 class="pb">9 · Module flow: Inventory (items &amp; batches)</h2>
+<h3>9.1 Reading the stock view</h3>
+<div class="flow">
+  <div class="step db"><span class="t">A · inventory_items</span><span class="d"><span class="mono">.eq('hospital_id', h).eq('is_active', true)</span> · optional <span class="mono">.or('name.ilike.%term%,item_code.ilike.%term%')</span> · <span class="mono">order('name').limit(500)</span></span></div>
+  <div class="arrow">↓ &nbsp;then, in parallel intent&nbsp; ↓</div>
+  <div class="step db"><span class="t">B · stock_balances</span><span class="d"><span class="mono">select('item_id,quantity').eq('hospital_id', h)</span> (+ <span class="mono">.eq('warehouse_id', w)</span> when a warehouse filter is active)</span></div>
+  <div class="arrow">↓</div>
+  <div class="step"><span class="t">C · Client-side aggregation</span><span class="d">Build <span class="mono">Map&lt;itemId, double&gt;</span> by summing balances, then <span class="mono">InventoryItem.fromMap(row, quantities[row['id']] ?? 0)</span>. Items with no balance row are shown as <b>0 on hand</b> rather than filtered out.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">D · Row rendering</span><span class="d">Code, name, kind (<span class="mono">supply</span>/<span class="mono">medicine</span>), unit, quantity, and a low-stock chip when <span class="mono">quantity &lt;= minimum_stock</span>.</span></div>
+</div>
+
+<h3>9.2 Create item</h3>
+<p><span class="mono">item_code</span> (unique per hospital), name, kind enum, unit, <span class="mono">minimum_stock</span>, <span class="mono">reorder_level</span>; <span class="mono">created_by = auth.uid()</span>. Allowed for admin / inventory_manager / pharmacist.</p>
+
+<h3>9.3 Batch create + receipt chain (the medicine path)</h3>
+<div class="flow">
+  <div class="step guard"><span class="t">Item kind == 'medicine' and no matching batch?</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">Batch dialog first</span><span class="d">batch_number, expires_on, manufactured_on, unit_cost. Uniqueness <span class="mono">(item_id, batch_number)</span> — one batch record per item, reused by later receipts.</span></div>
+  <div class="arrow">↓ <small>_createBatch returns bool; flow aborts if false</small></div>
+  <div class="step db"><span class="t">createBatch() → inventory_batches INSERT</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">Then open the movement dialog</span><span class="d">Batches are listed ordered by <span class="mono">expires_on</span> with <span class="mono">is_quarantined = false</span>, i.e. earliest-expiry (FEFO) candidates first.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">recordMovement(...batchId) → RPC</span><span class="d">See §10 for the server-side transaction.</span></div>
+</div>
+
+<h3>9.4 Movement dialog — kind options and their server-side meaning</h3>
+<table>
+  <tr><th style="width:22%">UI option</th><th style="width:16%"><span class="mono">kind</span></th><th style="width:16%">Effect on balance</th><th>Roles accepted by the function</th></tr>
+  <tr><td>Receive stock</td><td><span class="mono">receipt</span></td><td class="yes">+ quantity</td><td>admin, inventory_manager, pharmacist</td></tr>
+  <tr><td>Issue stock</td><td><span class="mono">issue</span></td><td class="deny">− quantity</td><td>admin, inventory_manager, storekeeper, pharmacist</td></tr>
+  <tr><td>Positive adjustment</td><td><span class="mono">adjustment</span></td><td class="yes">+ quantity</td><td>admin, inventory_manager, pharmacist</td></tr>
+  <tr><td>Record wastage</td><td><span class="mono">wastage</span></td><td class="deny">− quantity</td><td>admin, inventory_manager, pharmacist</td></tr>
+  <tr><td>Return</td><td><span class="mono">return</span></td><td class="yes">+ quantity</td><td>admin, inventory_manager, storekeeper, pharmacist</td></tr>
+  <tr><td>(transfer legs — function-generated only)</td><td><span class="mono">transfer_out</span> / <span class="mono">transfer_in</span></td><td>− / + </td><td>Written exclusively by <span class="mono">hrms_transfer_stock</span></td></tr>
+</table>
+<p class="note">The dialog pre-selects <span class="mono">receipt</span> for catalog managers and <span class="mono">issue</span> otherwise; quantity is a user-entered positive number in the item's own unit.</p>
+
+<h2 class="pb">10 · Module flow: Stock movements — <span class="mono">record_stock_movement</span></h2>
+<p>The only legal way to change a balance. <span class="mono">plpgsql</span>, <span class="mono">SECURITY DEFINER</span>, returns the new movement id.</p>
+<div class="flow">
+  <div class="step guard"><span class="t">1 · Auth guard</span><span class="d"><span class="mono">IF auth.uid() IS NULL → RAISE 'Authentication required'</span></span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">2 · Quantity guard</span><span class="d"><span class="mono">NULL or ≤ 0 → 'Quantity must be greater than zero'</span>. Column-level <span class="mono">CHECK (quantity &gt; 0)</span> backs this up.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">3 · Role gate (kind-dependent)</span><span class="d"><span class="mono">receipt/adjustment/wastage</span> → <span class="mono">{hospital_admin, inventory_manager, pharmacist}</span>; everything else → that set <b>plus</b> <span class="mono">storekeeper</span>. Failure → 'Not authorized for this hospital operation'.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">4 · Batch eligibility + row lock</span><span class="d">If <span class="mono">p_batch_id</span> given: <span class="mono">SELECT … FOR UPDATE</span> requiring, for <span class="mono">issue</span>, that <span class="mono">NOT is_quarantined</span> and <span class="mono">expires_on IS NULL OR expires_on ≥ current_date</span>. Not found → 'Batch not found or unavailable for issue'.<br>If <b>no</b> batch and the item's kind is <span class="mono">medicine</span> → 'Medicine movements require a batch'. <b>Expired and quarantined medicine can therefore never leave stock.</b></span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">5 · Ensure balance row exists</span><span class="d">INSERT with <span class="mono">quantity = 0</span> · <span class="mono">ON CONFLICT (warehouse_id, item_id, batch_id) DO NOTHING</span>. Uses the <span class="mono">UNIQUE NULLS NOT DISTINCT</span> index so a NULL batch still conflicts correctly.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">6 · Lock the balance</span><span class="d"><span class="mono">SELECT quantity … FOR UPDATE</span> — serialises concurrent issues for the same (warehouse, item, batch).</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">7 · Overspend guard</span><span class="d">For <span class="mono">issue</span> / <span class="mono">wastage</span> / <span class="mono">transfer_out</span>: <span class="mono">v_balance &lt; p_quantity → 'Insufficient stock'</span> and the whole transaction rolls back.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">8 · Apply delta</span><span class="d">Single <span class="mono">UPDATE</span> with a <span class="mono">CASE</span>: subtract for the three outbound kinds, add otherwise; bump <span class="mono">updated_at</span>. <span class="mono">CHECK (quantity ≥ 0)</span> is a final structural guarantee.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">9 · Append immutable history</span><span class="d">INSERT into <span class="mono">stock_movements</span> with <span class="mono">actor_id = auth.uid()</span>, <span class="mono">reason</span>, <span class="mono">reference</span>; <span class="mono">RETURNING id</span> → the function's result.</span></div>
+</div>
+<div class="card ok"><p style="margin:0"><b>Design property:</b> steps 5–9 are one transaction, so <span class="mono">stock_balances</span> is always derivable-consistent with <span class="mono">stock_movements</span>. Movements are append-only: no client can update or delete a history row, making the ledger an audit trail in itself.</p></div>
+
+<h2 class="pb">11 · Module flow: Facilities</h2>
+<div class="flow">
+  <div class="step ui"><span class="t">FacilitiesScreen</span><span class="d">Hospital picked as in §7; only <span class="mono">hospital_admin</span> sees create/toggle controls.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">Departments</span><span class="d">create: <span class="mono">hospital_id</span> + name + optional code. Constraints <span class="mono">UNIQUE(hospital_id, name)</span> and <span class="mono">UNIQUE(hospital_id, code)</span>. Activate/deactivate via <span class="mono">setDepartmentActive</span>.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">Warehouses</span><span class="d">create: hospital + optional department + name + location; <span class="mono">setWarehouseActive</span> for the inverse. <span class="mono">warehouses(hospitalId, includeInactive: true)</span> when administering, default active-only when picking a transfer endpoint.</span></div>
+</div>
+<div class="card"><h4>Why <span class="mono">UNIQUE(id, hospital_id)</span> is everywhere</h4><p style="margin:0">Composite uniques on <span class="mono">(id, hospital_id)</span> let child tables declare <span class="mono">FOREIGN KEY (x_id, hospital_id) REFERENCES parent(id, hospital_id)</span>. This makes <b>cross-tenant references structurally impossible</b>: you cannot attach a warehouse from hospital A to a balance in hospital B, even with a crafted request.</p></div>
+
+<h2>12 · Module flow: Department requests &amp; review</h2>
+<div class="branch">
+  <div class="col" style="width:33%">
+    <div class="node p">REQUESTER<br>submitRequest</div>
+    <div class="node">1 · INSERT <span class="mono">resource_requests</span><br>department, purpose, priority, required_by, <span class="mono">requested_by = uid</span>, status defaults <span class="mono">'pending'</span></div>
+    <div class="node">2 · <span class="mono">select('id').single()</span></div>
+    <div class="node">3 · INSERT <span class="mono">resource_request_lines</span><br>item + quantity</div>
+    <div class="node g">RLS: INSERT allowed when member<br>AND <span class="mono">requested_by = auth.uid()</span></div>
+  </div>
+  <div class="col" style="width:34%">
+    <div class="node o">REVIEWER<br>reviewRequest(id, status, note)</div>
+    <div class="node">UPDATE <span class="mono">resource_requests</span> SET<br>status, <span class="mono">reviewed_by = uid</span>, <span class="mono">review_note</span></div>
+    <div class="node">UI offers <b>Approve</b> → <span class="mono">'approved'</span><br>UI offers <b>Reject</b> → <span class="mono">'rejected'</span></div>
+    <div class="node g">RLS roles: admin, inventory_manager,<br>department_head, storekeeper, pharmacist</div>
+    <div class="node o">Enum also defines <span class="mono">fulfilled</span>,<br><span class="mono">cancelled</span> — not reachable in UI</div>
+  </div>
+  <div class="col" style="width:33%">
+    <div class="node">LISTING<br><span class="mono">requests(hospitalId)</span></div>
+    <div class="node">Embeds <span class="mono">departments(name)</span> and<br><span class="mono">resource_request_lines(id, quantity,<br>approved_quantity, inventory_items(name,<br>item_code, unit))</span></div>
+    <div class="node">order by created_at desc · limit 200</div>
+    <div class="node o">After any action the screen<br>re-queries the whole list</div>
+  </div>
+</div>
+<div class="card warn"><h4>Two open loops in this flow</h4>
+<ul style="margin:0">
+  <li><span class="mono">approved_quantity</span> exists on the line and is readable, but <b>no UI writes it</b> — approval is a blanket yes/no on the whole request, not a partial allocation.</li>
+  <li><b>Approval does not move stock.</b> Nothing links an approved request to an <span class="mono">issue</span> movement; a storekeeper must go to Inventory and record the issue by hand. There is no "fulfil" action and no reference linking movement → request id (though <span class="mono">reference</span> is free-text and could carry it).</li>
+</ul></div>
+
+<h2 class="pb">13 · Module flow: Stock transfers — <span class="mono">hrms_transfer_stock</span></h2>
+<div class="flow">
+  <div class="step guard"><span class="t">1 · Guards</span><span class="d">Authenticated · quantity &gt; 0 · <span class="mono">source ≠ destination</span> ('Choose two different warehouses', backed by <span class="mono">CHECK</span>) · role ∈ {<span class="mono">hospital_admin, inventory_manager, storekeeper</span>}.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">2 · Batch check (stricter than §10)</span><span class="d">When a batch is supplied the quarantine + expiry test is applied <b>unconditionally</b> — transfers of expired or quarantined stock are always refused. Medicine without a batch → 'Medicine transfers require a valid batch'.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">3 · Lock + verify source</span><span class="d"><span class="mono">SELECT … FOR UPDATE</span> on the source balance; <span class="mono">coalesce(v_qty,0) &lt; p_quantity → 'Insufficient stock at source warehouse'</span>.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">4 · Debit source</span><span class="d"><span class="mono">quantity = quantity - p_quantity</span>, bump <span class="mono">updated_at</span>.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">5 · Ensure destination row</span><span class="d">INSERT 0 + <span class="mono">ON CONFLICT DO NOTHING</span> — needed because the destination balance may not exist yet.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">6 · Credit destination</span><span class="d"><span class="mono">quantity = quantity + p_quantity</span>.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">7 · Write BOTH ledger legs</span><span class="d">Two-row INSERT into <span class="mono">stock_movements</span>: <span class="mono">transfer_out</span> at source and <span class="mono">transfer_in</span> at destination, same quantity, reason, reference and <span class="mono">actor_id</span>. Stock is conserved by construction.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">8 · Record the transfer header</span><span class="d">INSERT <span class="mono">stock_transfers</span> (status defaults <span class="mono">'completed'</span>) <span class="mono">RETURNING id</span>.</span></div>
+</div>
+<p>Client listing embeds the two warehouse names through explicit FK disambiguation — <span class="mono">source:warehouses!stock_transfers_source_warehouse_id_fkey(name)</span> and <span class="mono">destination:warehouses!stock_transfers_destination_warehouse_id_fkey(name)</span> — because a single table holds two FKs to <span class="mono">warehouses</span>.</p>
+<div class="card warn"><p style="margin:0"><b>Irreversible by design:</b> <span class="mono">stock_transfers</span> is granted only <span class="mono">SELECT, INSERT</span>. The <span class="mono">'cancelled'</span> enum value exists but no policy permits UPDATE, so a mistaken transfer can only be corrected by a compensating reverse transfer.</p></div>
+
+<h2>14 · Module flow: Procurement</h2>
+<div class="flow">
+  <div class="step ui"><span class="t">Suppliers</span><span class="d">"Add supplier" icon appears only for <span class="mono">hospital_admin</span>/<span class="mono">procurement_officer</span>. Fields: name (unique per hospital), contact, email, phone, address, <span class="mono">created_by</span>. RLS <span class="mono">FOR ALL</span> for those two roles.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">Requisition created</span><span class="d"><span class="mono">createRequisition</span> → title, justification, optional department / supplier / estimated cost / required-by, hard-coded <span class="mono">status: 'submitted'</span>, <span class="mono">created_by = uid</span>. Any active member may submit.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step guard"><span class="t">Review</span><span class="d">Popup → <b>Approve</b> (<span class="mono">'approved'</span>) or <b>Reject</b> (<span class="mono">'rejected'</span>). UPDATE policy: <span class="mono">hospital_admin</span>, <span class="mono">procurement_officer</span>, <span class="mono">finance_officer</span>.</span></div>
+  <div class="arrow">↓<small class="deny">dead end</small></div>
+  <div class="step" style="border-style:dashed"><span class="t"><span class="mono">'received'</span> / <span class="mono">'draft'</span> / <span class="mono">'cancelled'</span></span><span class="d">Defined in <span class="mono">hrms_procurement_status</span> but not offered by the UI, and there is no purchase order, goods-receipt note, or stock receipt linked to a requisition. The procurement flow ends at approval — stock is then received manually in Inventory.</span></div>
+</div>
+<p class="note">A natural reorder trigger — <span class="mono">reorder_level</span> on the item, or an approved request — is not wired to requisition creation.</p>
+
+<h2 class="pb">15 · Module flow: Equipment &amp; maintenance</h2>
+<h3>15.1 Medical assets</h3>
+<p><span class="mono">createAsset</span>: <span class="mono">asset_tag</span> (unique per hospital), name, department, serial, manufacturer, model, location, <span class="mono">purchased_on</span>, <span class="mono">warranty_until</span>, notes, <span class="mono">created_by</span>. Status enum defaults <span class="mono">'available'</span>: <span class="mono">available · assigned · under_maintenance · out_of_service · quarantined · decommissioned</span>. RLS write: <span class="mono">hospital_admin</span>, <span class="mono">biomedical_engineer</span>.</p>
+<div class="card danger"><h4>UI / RLS mismatch — confirmed</h4>
+<p style="margin:0"><span class="mono">workflows_screen.dart:136</span> grants <span class="mono">_canCreate</span> for the equipment and maintenance modules to <span class="mono">{hospital_admin, biomedical_engineer, healthcare_worker}</span>. But the database allows asset writes only for <span class="mono">{hospital_admin, biomedical_engineer}</span>. A <span class="mono">healthcare_worker</span> is therefore shown an "Add equipment" button that <b>always fails on the server</b> with 'new row violates row-level security policy'. For <em>maintenance</em> the opposite is true — every member may report — so the shared <span class="mono">||</span> branch is too narrow there as well. The two modules need separate permission sets.</p></div>
+
+<h3>15.2 Maintenance work orders</h3>
+<div class="flow">
+  <div class="step ui"><span class="t">Report</span><span class="d"><span class="mono">createMaintenance(assetId, title, description, priority, scheduled_for)</span>, <span class="mono">reported_by = uid</span>, status defaults <span class="mono">'open'</span>. RLS: any member, self-atttributed.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">open → in_progress</span><span class="d"><span class="mono">setMaintenanceStatus(id, 'in_progress')</span> — allowed for admin / biomedical_engineer.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">→ completed (+ resolution) | cancelled</span><span class="d">Same call writes <span class="mono">resolution</span> text.</span></div>
+</div>
+<p class="note">Not implemented: <span class="mono">assigned_to</span> is a column but no UI sets it; asset status is <b>not</b> changed when a work order opens or closes, so <span class="mono">under_maintenance</span> must be maintained by hand and can silently drift from the work-order table. No scheduled/service-interval engine exists.</p>
+
+<h2>16 · Module flow: Users &amp; roles administration</h2>
+<p>Whole module is <span class="mono">hospital_admin</span>-only in UI, and every one of the three RPCs re-checks that server-side.</p>
+<div class="flow">
+  <div class="step db"><span class="t">List — <span class="mono">hrms_list_hospital_users(p_hospital_id)</span></span><span class="d">Joins <span class="mono">hrms_memberships</span> → <span class="mono">auth.users</span> to expose email (normally unreachable to clients). The whole thing is gated: the <span class="mono">WHERE</span> includes <span class="mono">hrms_has_membership(p_hospital_id, '{hospital_admin}')</span>, so a non-admin gets an <b>empty result</b>, not an error.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">Add — <span class="mono">hrms_add_member(hospital, email, role, dept)</span></span><span class="d">1) admin check → 'Only a hospital administrator can assign memberships'. 2) <span class="mono">SELECT id FROM auth.users WHERE lower(email) = lower(trim(p_email))</span>; if none → <b>'No registered account found for this email'</b>. 3) Look for an identical <span class="mono">(user, hospital, department, role)</span> membership; if found just flip <span class="mono">is_active = true</span>, else INSERT. Idempotent — re-adding cannot duplicate a role.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">Deactivate — <span class="mono">hrms_set_membership_active(id, bool)</span></span><span class="d">Re-reads the membership's hospital, re-checks admin, then refuses self-deactivation → <b>'You cannot deactivate your own membership'</b> (anti-lockout). Sets the flag only; never deletes.</span></div>
+</div>
+<div class="card"><h4>Deliberate onboarding order</h4>
+<p style="margin:0">Public self-registration was removed and membership can only be granted to an <b>already-existing account</b>. So the operational flow is: user signs up through a Supabase-console-created account (or a retained legacy path) → an administrator attaches them to a hospital with a role → HRMS screens unlock. There is no bootstrap mechanism for the <em>first</em> <span class="mono">hospital_admin</span>; README assigns that to "a trusted administrative process" (direct SQL).</p></div>
+<p class="note">Note the granularity: memberships are per (hospital, department, role). A user can be <span class="mono">pharmacist</span> in one hospital and <span class="mono">auditor</span> in another, and <span class="mono">HrmsService.hospitals()</span> collapses this into <span class="mono">hospital → Set&lt;roles&gt;</span> — which is exactly what the UI consumes. Department-level role separation is flattened away at read time.</p>
+
+<h2 class="pb">17 · Module flow: Reports</h2>
+<p><span class="mono">HrmsModule.reports</span> is not a separate service: <span class="mono">_load()</span> calls <span class="mono">dashboard(id)</span> and reshapes it into a flat label/value list with section markers (<span class="mono">{'_section': …}</span>).</p>
+<table>
+  <tr><th style="width:32%">Section</th><th>Rows</th></tr>
+  <tr><td>Inventory summary</td><td>Catalog items · Items currently stocked · Low or out of stock · Batches expiring within 30 days · Expired batches</td></tr>
+  <tr><td>Low stock items</td><td>Per item: "<span class="mono">qty unit on hand · minimum N</span>"</td></tr>
+  <tr><td>Recent stock activity</td><td>The raw recent-movement maps (max 100)</td></tr>
+</table>
+<p><span class="mono">_canCreate</span> is <span class="mono">false</span> for reports — read-only, no hospital-member role restriction on viewing. No CSV/PDF export, no date range, no per-department breakdown, no valuation (<span class="mono">unit_cost</span> is stored on batches but never aggregated into a report).</p>
+
+<h2>18 · Role → capability matrix</h2>
+<p class="note">Source: RLS policies + <span class="mono">SECURITY DEFINER</span> role arrays (authoritative). ✔ permitted, ✘ refused.</p>
+<table>
+  <tr>
+    <th style="width:20%">Capability (server-side)</th>
+    <th>hospital<br>admin</th><th>inventory<br>manager</th><th>store<br>keeper</th><th>pharmacist</th><th>procure<br>ment</th><th>dept<br>head</th><th>health<br>worker</th><th>biomed<br>eng.</th><th>finance</th><th>auditor</th>
+  </tr>
+  <tr><td>Read hospital data</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+  <tr><td>Departments / warehouses</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Items &amp; batches (catalog)</td><td class="yes">✔</td><td class="yes">✔</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Receipt / adjustment / wastage</td><td class="yes">✔</td><td class="yes">✔</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Issue / return</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Stock transfer</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Submit request</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+  <tr><td>Review request</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Suppliers</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Submit requisition</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+  <tr><td>Requisition status</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td></tr>
+  <tr><td>Medical assets</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Report maintenance</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+  <tr><td>Close work order</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td></tr>
+  <tr><td>Manage memberships</td><td class="yes">✔</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td><td class="no">✘</td></tr>
+</table>
+<div class="card warn"><h4>Two structural observations</h4>
+<ul style="margin:0">
+  <li><b>No read-only role.</b> <span class="mono">auditor</span> and <span class="mono">finance_officer</span> are treated as ordinary members for reads, but "member" is <span class="mono">p_roles IS NULL</span> — i.e. <em>any</em> role, including <span class="mono">healthcare_worker</span>, can read every hospital record: balances, costs, suppliers, requisitions. There is no least-privilege read tier.</li>
+  <li><b>UI gating is narrower than the DB in several places</b> (e.g. <span class="mono">finance_officer</span> may change requisition status but <span class="mono">_canCreate</span> does not list them for procurement) — so some permitted actions are unreachable without editing the Dart. The inverse also occurs (§15).</li>
+</ul></div>
+
+<h2 class="pb">19 · Database schema / entity flow</h2>
+<div class="branch">
+  <div class="col">
+    <div class="node h">TENANT</div>
+    <div class="node">hospitals<br><span class="mono">code unique · is_active</span></div>
+    <div class="node">departments<br><span class="mono">UQ(hospital,name)</span></div>
+    <div class="node">hrms_memberships<br><span class="mono">user·hospital·dept·role</span></div>
+    <div class="node">warehouses<br><span class="mono">→ department?</span></div>
+  </div>
+  <div class="col">
+    <div class="node h">STOCK</div>
+    <div class="node">inventory_items<br><span class="mono">kind: supply|medicine<br>minimum_stock·reorder_level</span></div>
+    <div class="node">inventory_batches<br><span class="mono">expires_on·unit_cost<br>is_quarantined</span></div>
+    <div class="node g">stock_balances<br><span class="mono">UQ(wh,item,batch)</span></div>
+    <div class="node g">stock_movements<br><span class="mono">append-only ledger</span></div>
+    <div class="node g">stock_transfers<br><span class="mono">insert-only</span></div>
+  </div>
+  <div class="col">
+    <div class="node h">WORKFLOW</div>
+    <div class="node o">resource_requests<br><span class="mono">5-status enum</span></div>
+    <div class="node o">resource_request_lines</div>
+    <div class="node o">purchase_requisitions<br><span class="mono">6-status enum</span></div>
+    <div class="node">hrms_suppliers</div>
+  </div>
+  <div class="col">
+    <div class="node h">ASSETS</div>
+    <div class="node p">medical_assets<br><span class="mono">UQ(hospital,asset_tag)<br>6-status enum</span></div>
+    <div class="node p">maintenance_work_orders<br><span class="mono">4-status enum</span></div>
+    <div class="node s">auth.users / profiles<br><span class="mono">(shared with legacy)</span></div>
+  </div>
+</div>
+
+<h3>19.1 Enum / state inventory</h3>
+<table>
+  <tr><th style="width:26%">Type</th><th>Values</th><th style="width:30%">Default &amp; reachable from UI</th></tr>
+  <tr><td><span class="mono">hrms_membership_role</span></td><td>10 roles (§6.2)</td><td>set by admin RPC</td></tr>
+  <tr><td><span class="mono">hrms_item_kind</span></td><td><span class="mono">supply</span>, <span class="mono">medicine</span></td><td><span class="mono">supply</span>; both selectable</td></tr>
+  <tr><td><span class="mono">hrms_movement_kind</span></td><td>receipt, issue, adjustment, transfer_in, transfer_out, return, wastage</td><td>5 selectable; 2 transfer legs function-only</td></tr>
+  <tr><td><span class="mono">hrms_request_status</span></td><td>pending, approved, rejected, <span class="mono">fulfilled</span>, <span class="mono">cancelled</span></td><td>pending → approve/reject; last two unreachable</td></tr>
+  <tr><td><span class="mono">hrms_transfer_status</span></td><td>completed, <span class="mono">cancelled</span></td><td>always completed; no UPDATE grant</td></tr>
+  <tr><td><span class="mono">hrms_procurement_status</span></td><td><span class="mono">draft</span>, submitted, approved, rejected, <span class="mono">received</span>, <span class="mono">cancelled</span></td><td>client forces submitted; approve/reject only</td></tr>
+  <tr><td><span class="mono">hrms_asset_status</span></td><td>available, assigned, under_maintenance, out_of_service, quarantined, decommissioned</td><td>available; <b>no UI control at all</b></td></tr>
+  <tr><td><span class="mono">hrms_maintenance_status</span></td><td>open, in_progress, completed, cancelled</td><td>open → all four reachable</td></tr>
+  <tr><td>priority (both tables)</td><td>low / normal / high / urgent</td><td>CHECK constraint, default normal</td></tr>
+</table>
+<p class="note">Money/quantity types: <span class="mono">numeric(14,3)</span> for quantities, <span class="mono">numeric(14,2)</span> for costs — deliberately not <span class="mono">float</span>, so balance arithmetic is exact. Dart models all quantities as <span class="mono">double</span>, which is safe at these magnitudes but is the one place exactness is lost.</p>
+
+<h2 class="pb">20 · Legacy e-resources subsystem flow</h2>
+<p>Defined in <span class="mono">supabase/schema.sql</span> + <span class="mono">lib/services/resource_service.dart</span> / <span class="mono">admin_service.dart</span>. Still fully coded; reachable only by typing a URL (§5).</p>
+<h3>20.1 Upload → publish</h3>
+<div class="flow">
+  <div class="step ui"><span class="t">ResourceFormScreen</span><span class="d"><span class="mono">file_picker</span>; extension whitelist + 100 MB cap per <span class="mono">FileRules</span>; type inferred from extension; categories multi-select.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">Storage upload</span><span class="d">Bucket <span class="mono">resources</span>, path <span class="mono">uploads/{uid}/{timestamp}.{ext}</span>, <span class="mono">upsert: false</span>. Storage policy requires an authenticated uploader.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">INSERT resources</span><span class="d">Metadata + <span class="mono">storage_path</span>/<span class="mono">file_size</span>/<span class="mono">mime_type</span>, <span class="mono">uploaded_by = uid</span>, status <b><span class="mono">pending</span></b> — or <span class="mono">approved</span> immediately when the uploader <span class="mono">canApprove</span> (admin/librarian).</span></div>
+  <div class="arrow">↓</div>
+  <div class="step db"><span class="t">resource_categories rows</span><span class="d">Delete-then-insert of the join rows.</span></div>
+  <div class="arrow">↓ <small>DB triggers fire automatically</small></div>
+  <div class="step db"><span class="t">notify_approvers_on_upload</span><span class="d">Inserts notification rows for approver roles → <span class="mono">pending</span> resources reach reviewers without any HRMS/notification code in Dart.</span></div>
+</div>
+
+<h3>20.2 Approval, versioning, consumption</h3>
+<table>
+  <tr><th style="width:26%">Flow</th><th>Mechanics</th></tr>
+  <tr><td>Approval</td><td><span class="mono">setStatus(id, approved|rejected|archived)</span> + <span class="mono">setAvailability(active|inactive|restricted|archived)</span>. Trigger <span class="mono">notify_on_resource_change</span> informs the uploader.</td></tr>
+  <tr><td>Versioning</td><td><span class="mono">addVersion()</span> uploads to <span class="mono">versions/{id}/{n}.{ext}</span>, inserts <span class="mono">resource_versions</span>, bumps <span class="mono">resources.version</span>. Trigger <span class="mono">resource_version_snapshot</span> snapshots the previous state on update. <span class="mono">restoreVersion()</span> snapshots current, then repoints the resource (version advances, never rewinds).</td></tr>
+  <tr><td>View / download</td><td><span class="mono">log_access</span> RPC writes <span class="mono">access_logs</span>, then <span class="mono">createSignedUrl(path, 300)</span> — a 5-minute URL. <span class="mono">isDownloadable</span> requires a file, <span class="mono">approved</span> status, and <span class="mono">active</span>/<span class="mono">restricted</span> availability.</td></tr>
+  <tr><td>Audit</td><td>Trigger <span class="mono">audit_resource_changes</span> writes <span class="mono">audit_logs</span> (readable only by <span class="mono">admin</span>/<span class="mono">librarian</span>); <span class="mono">AuditScreen</span> and <span class="mono">accessLogs()</span> surface both.</td></tr>
+  <tr><td>Discovery</td><td><span class="mono">ResourceQuery</span>: free-text <span class="mono">or()</span> over title/description/author, type, category, status (defaults to <span class="mono">approved</span> only), favorites, mine.</td></tr>
+  <tr><td>Analytics</td><td><span class="mono">counts()</span>, <span class="mono">popularByDownloads()</span>, <span class="mono">downloadsPerDay(days: 14)</span> → <span class="mono">fl_chart</span> in <span class="mono">ReportsScreen</span>; <span class="mono">broadcast()</span> sends a system notification to all users.</td></tr>
+  <tr><td>Roles</td><td>Independent 4-value ladder: <span class="mono">user → staff → librarian → admin</span>, via <span class="mono">profiles.role</span> + helper SQL functions <span class="mono">current_role() / is_admin() / is_staff_level() / can_manage_resources()</span>. <b>Not connected to HRMS memberships.</b></td></tr>
+</table>
+<div class="card danger"><h4>Two authorization models coexist</h4>
+<p style="margin:0">Legacy RLS decides on <span class="mono">profiles.role</span> (global). HRMS RLS decides on <span class="mono">hrms_memberships.role</span> (per hospital). A user can simultaneously be a legacy <span class="mono">user</span> and an HRMS <span class="mono">hospital_admin</span>, or a legacy <span class="mono">admin</span> with no hospital access. <span class="mono">AppState.isAdmin / canApprove / canUpload</span> read only the legacy field, while every HRMS screen reads only the membership set — so the sidebar, the profile badge and the HRMS buttons can legitimately disagree about who a user is. Unifying these is the largest remaining design task.</p></div>
+
+<h2>21 · Realtime, notifications &amp; favorites</h2>
+<div class="flow">
+  <div class="step db"><span class="t">Channel <span class="mono">'public:notifications'</span></span><span class="d">Opened on sign-in only. <span class="mono">onPostgresChanges(insert, table: notifications, filter: user_id = &lt;uid&gt;)</span>.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step"><span class="t">Callback → AppState</span><span class="d"><span class="mono">_unread += 1</span>; <span class="mono">notifyListeners()</span> → shell badge updates live and <span class="mono">GoRouter</span> refresh runs.</span></div>
+  <div class="arrow">↓</div>
+  <div class="step ui"><span class="t">NotificationsScreen</span><span class="d"><span class="mono">list(limit: 100)</span>, <span class="mono">markRead(id)</span>, <span class="mono">markAllRead()</span>. RLS lets a user read and update only their own rows.</span></div>
+</div>
+<p>Favorites are legacy-only: <span class="mono">AppState.refreshFavorites()</span> loads the id set at sign-in, <span class="mono">toggleFavorite()</span> upserts/deletes and patches the in-memory set. <span class="mono">FavoritesScreen</span> is routed but not in the nav.</p>
+<div class="card warn"><p style="margin:0"><b>HRMS emits no notifications.</b> An approved request, an overdue work order, a low-stock item or an expiring batch never produces a notification row — the realtime pipeline is wired only to the legacy <span class="mono">resources</span> triggers. README lists this as unimplemented.</p></div>
+
+<h2 class="pb">22 · End-to-end operational lifecycle</h2>
+<p>The complete real-world loop the system supports, with the module responsible at each stage and the gaps marked.</p>
+<table>
+  <tr><th style="width:5%">#</th><th style="width:20%">Stage</th><th style="width:22%">Actor / role</th><th style="width:26%">Mechanism</th><th>State change</th></tr>
+  <tr><td>1</td><td>Provision tenant</td><td class="deny">Trusted SQL / service role</td><td>INSERT <span class="mono">hospitals</span></td><td>Hospital exists; no client can do this</td></tr>
+  <tr><td>2</td><td>Structure</td><td><span class="mono">hospital_admin</span></td><td>Facilities module</td><td>Departments + warehouses active</td></tr>
+  <tr><td>3</td><td>Staff</td><td><span class="mono">hospital_admin</span></td><td><span class="mono">hrms_add_member</span></td><td>Membership → roles resolve in UI</td></tr>
+  <tr><td>4</td><td>Catalogue</td><td><span class="mono">inventory_manager</span> / <span class="mono">pharmacist</span></td><td>Inventory module</td><td>Items (+ batches for medicine)</td></tr>
+  <tr><td>5</td><td>Receive</td><td>same</td><td><span class="mono">record_stock_movement(receipt)</span></td><td>Balance ↑ · movement row</td></tr>
+  <tr><td>6</td><td>Signal need</td><td><span class="mono">healthcare_worker</span> / <span class="mono">department_head</span></td><td>Requests module</td><td>Request <span class="mono">pending</span></td></tr>
+  <tr><td>7</td><td>Decide</td><td>reviewer roles</td><td><span class="mono">reviewRequest</span></td><td><span class="mono">approved</span>/<span class="mono">rejected</span> <span class="mono">⟵ does not move stock</span></td></tr>
+  <tr><td>8</td><td>Allocate</td><td><span class="mono">storekeeper</span></td><td>Inventory → <span class="mono">issue</span></td><td>Balance ↓ · FEFO batch enforced</td></tr>
+  <tr><td>9</td><td>Reposition</td><td>admin / inv. mgr / storekeeper</td><td><span class="mono">hrms_transfer_stock</span></td><td>Both balances + 2 legs + header</td></tr>
+  <tr><td>10</td><td>Reorder</td><td><span class="mono">procurement_officer</span></td><td>Suppliers + requisition</td><td><span class="mono">submitted → approved</span> <span class="mono">⟵ no PO, no GRN</span></td></tr>
+  <tr><td>11</td><td>Restock</td><td><span class="mono">storekeeper</span></td><td>Manual receipt, referencing the requisition by free text</td><td>Balance ↑ <span class="mono">⟵ unlinked</span></td></tr>
+  <tr><td>12</td><td>Control losses</td><td>inv. mgr / pharmacist</td><td><span class="mono">adjustment</span> / <span class="mono">wastage</span> / <span class="mono">return</span></td><td>Balance ± · reason recorded</td></tr>
+  <tr><td>13</td><td>Manage equipment</td><td><span class="mono">biomedical_engineer</span></td><td>Assets + work orders</td><td>Asset register · <span class="mono">open → completed</span> <span class="mono">⟵ asset status manual</span></td></tr>
+  <tr><td>14</td><td>Oversee</td><td><span class="mono">auditor</span> / <span class="mono">finance_officer</span></td><td>Reports module + movements ledger</td><td>Read-only view <span class="mono">⟵ no export</span></td></tr>
+</table>
+
+<h2>23 · Gaps, mismatches &amp; dead code</h2>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:24%">Finding</th><th style="width:24%">Evidence</th><th>Impact</th></tr>
+  <tr><td>1</td><td>Equipment/maintenance UI gate ≠ DB policy</td><td><span class="mono">workflows_screen.dart:136</span> vs 002 migration policies</td><td class="deny">Healthcare workers see a button that always fails; biomed-only writes for reporting are over-restricted. Split the two branches.</td></tr>
+  <tr><td>2</td><td>Request approval does not issue stock</td><td>No caller links <span class="mono">record_stock_movement</span> to a request</td><td>Approval and allocation are untracked, separate acts; no fulfilment evidence.</td></tr>
+  <tr><td>3</td><td><span class="mono">approved_quantity</span> never written</td><td>column exists; <span class="mono">reviewRequest</span> sets status only</td><td>No partial approval — an over-optimistic "approve all or nothing".</td></tr>
+  <tr><td>4</td><td>Asset status never updated</td><td><span class="mono">medical_assets.status</span> has no UI writer</td><td>Register drifts from work-order reality; <span class="mono">under_maintenance</span> effectively unused.</td></tr>
+  <tr><td>5</td><td>Hospital selection is per-screen and ephemeral</td><td>each screen holds private <span class="mono">_hospitalId</span>, auto-picks <span class="mono">.first</span></td><td class="deny">Multi-hospital users re-choose the tenant on every page; risk of acting in the wrong hospital.</td></tr>
+  <tr><td>6</td><td>No least-privilege read tier</td><td><span class="mono">p_roles IS NULL</span> = any membership</td><td class="deny">Every member reads costs, suppliers and requisitions; HR-sensitive data over-exposed.</td></tr>
+  <tr><td>7</td><td>Two disconnected role models</td><td><span class="mono">profiles.role</span> vs <span class="mono">hrms_memberships.role</span></td><td>Inconsistent capabilities and confusing profile screen.</td></tr>
+  <tr><td>8</td><td>No bootstrap admin</td><td><span class="mono">hrms_add_member</span> requires an existing admin</td><td>First-admin provisioning must be manual SQL — blocks new tenants.</td></tr>
+  <tr><td>9</td><td>HRMS emits zero notifications</td><td>realtime + triggers cover <span class="mono">notifications</span> from legacy tables only</td><td class="deny">No expiry / low-stock / approval alerts; README confirms unimplemented.</td></tr>
+  <tr><td>10</td><td>Unreachable status enum values</td><td><span class="mono">fulfilled</span>, <span class="mono">cancelled</span>, <span class="mono">draft</span>, <span class="mono">received</span>, transfer <span class="mono">cancelled</span></td><td>Data model is ahead of the workflow; cancelled transfers are impossible by grant.</td></tr>
+  <tr><td>11</td><td>Legacy admin/resource screens routed but not in nav</td><td><span class="mono">shell.dart:164</span> spreads only <span class="mono">_userDestinations</span></td><td><span class="mono">_staffDestinations</span> and <span class="mono">_adminDestinations</span> are dead constants; 9 legacy pages are URL-only.</td></tr>
+  <tr><td>12</td><td><span class="mono">/register</span> route never registered</td><td><span class="mono">constants.dart</span> defines it; <span class="mono">router.dart</span> omits it</td><td><span class="mono">register_screen.dart</span> is unreachable; signup only via Supabase console.</td></tr>
+  <tr><td>13</td><td>No pagination</td><td>hard <span class="mono">limit(500/200/100)</span> everywhere</td><td>Silently truncated lists at real hospital scale; low-stock counts under-report.</td></tr>
+  <tr><td>14</td><td>Aggregation done client-side</td><td><span class="mono">inventory()</span> sums balances in Dart</td><td>Two round-trips and O(rows) transfer; a SQL view / RPC would be exact and cheaper.</td></tr>
+  <tr><td>15</td><td>No offline sync, no report export, no audit/report layer for HRMS</td><td>README scope notes</td><td>Blocks field use on unstable hospital networks.</td></tr>
+  <tr><td>16</td><td>Client <span class="mono">updated_at</span> not always written</td><td>several INSERT/UPDATE paths omit it (tables lack a <span class="mono">touch</span> trigger, unlike legacy)</td><td><span class="mono">updated_at</span> can be stale on HRMS rows; don't build deltas on it.</td></tr>
+  <tr><td>17</td><td><span class="mono">.env</span> bundled as a Flutter asset</td><td><span class="mono">pubspec.yaml: assets: - .env</span></td><td>Ship-anony­mous key only. Any secret placed in <span class="mono">.env</span> is readable from the web bundle — verify before production.</td></tr>
+  <tr><td>18</td><td>Batch expiry check skips transfers of unbatched supplies</td><td>002 §transfer has no date branch for <span class="mono">p_batch_id IS NULL</span></td><td>Correct today; revisit if non-medicine batches are introduced.</td></tr>
+</table>
+
+<h2 class="pb">24 · Source file map</h2>
+<table>
+  <tr><th style="width:42%">Path</th><th style="width:10%">Lines</th><th>Role in the flow</th></tr>
+  <tr><td><span class="mono">lib/main.dart</span></td><td>154</td><td>Bootstrap + SetupRequiredScreen fallback</td></tr>
+  <tr><td><span class="mono">lib/app_state.dart</span></td><td>185</td><td>Session/profile/favorites/unread + realtime + legacy role flags</td></tr>
+  <tr><td><span class="mono">lib/router.dart</span></td><td>165</td><td>25 routes + global auth redirect</td></tr>
+  <tr><td><span class="mono">lib/shell.dart</span></td><td>335</td><td>Rail / drawer + bottom bar; AppStateScope injection</td></tr>
+  <tr><td><span class="mono">lib/models/models.dart</span></td><td>479</td><td>Legacy enums + Profile/Resource/Category/Notification/Audit models</td></tr>
+  <tr><td><span class="mono">lib/core/constants.dart</span></td><td>58</td><td>Route table + file-upload rules</td></tr>
+  <tr><td><span class="mono">lib/core/env.dart</span></td><td>13</td><td>Config guard</td></tr>
+  <tr><td><span class="mono">lib/services/hrms_service.dart</span></td><td>601</td><td>All HRMS reads + RPC wrappers + HRMS view models</td></tr>
+  <tr><td><span class="mono">lib/services/resource_service.dart</span></td><td>329</td><td>Legacy CRUD, storage, versions, favorites, signed URLs</td></tr>
+  <tr><td><span class="mono">lib/services/admin_service.dart</span></td><td>271</td><td>Legacy users/roles/categories/settings/audit + NotificationService</td></tr>
+  <tr><td><span class="mono">lib/services/auth_service.dart</span></td><td>100</td><td>signIn/register/ensureProfile/profile edits</td></tr>
+  <tr><td><span class="mono">lib/screens/hrms/dashboard_screen.dart</span></td><td>620</td><td>KPIs, role-adaptive panel</td></tr>
+  <tr><td><span class="mono">lib/screens/hrms/inventory_screen.dart</span></td><td>819</td><td>Items, batches, movement dialog</td></tr>
+  <tr><td><span class="mono">lib/screens/hrms/workflows_screen.dart</span></td><td>793</td><td>Seven modules through one <span class="mono">HrmsModule</span> switch</td></tr>
+  <tr><td><span class="mono">lib/screens/hrms/facilities_screen.dart</span></td><td>404</td><td>Departments + warehouses</td></tr>
+  <tr><td><span class="mono">lib/screens/hrms/movements_screen.dart</span></td><td>148</td><td>Read-only movement ledger</td></tr>
+  <tr><td><span class="mono">lib/screens/hrms/hrms_form_widgets.dart</span></td><td>130</td><td>Shared form scaffolding</td></tr>
+  <tr><td><span class="mono">lib/screens/auth/</span> · <span class="mono">lib/screens/admin/</span> · <span class="mono">lib/screens/*.dart</span></td><td>~1,900</td><td>Login + 7 legacy admin + 7 legacy resource screens</td></tr>
+  <tr><td><span class="mono">supabase/schema.sql</span></td><td>454</td><td>Legacy 11 tables, 20+ policies, 9 triggers/functions</td></tr>
+  <tr><td><span class="mono">supabase/migrations/001_hrms_inventory_foundation.sql</span></td><td>248</td><td>Tenant + stock core, <span class="mono">hrms_has_membership</span>, <span class="mono">record_stock_movement</span></td></tr>
+  <tr><td><span class="mono">supabase/migrations/002_hrms_workflows.sql</span></td><td>277</td><td>7 workflow tables, <span class="mono">hrms_transfer_stock</span>, membership RPCs</td></tr>
+</table>
+
+<footer>
+  <b>Hospital Resource Management System — Complete Project Flow.</b> Produced by static inspection of the repository at branch <span class="mono">main</span>. File and policy references cite the exact source; enum/status behaviour reflects the combination of grants, RLS policies and RPC role arrays in <span class="mono">supabase/migrations/</span>, which take precedence over Dart UI gating.
+</footer>
+
+</body>
+</html>
